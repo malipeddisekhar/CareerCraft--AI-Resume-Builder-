@@ -141,7 +141,7 @@ export const getAdminDashboardStats = async (req, res) => {
         SELECT
           COUNT(*)::bigint AS total_users,
           COUNT(*) FILTER (WHERE created_at < $1)::bigint AS last_month_users,
-          COUNT(*) FILTER (WHERE plan_id = 1 AND is_active = true AND is_admin = false)::bigint AS free_users,
+          COUNT(*) FILTER (WHERE plan = 'Free' AND is_active = true AND is_admin = false)::bigint AS free_users,
           (SELECT name FROM plans WHERE plan_id = 1 LIMIT 1) AS free_plan_name
         FROM users
       `, [lastMonthStart]),

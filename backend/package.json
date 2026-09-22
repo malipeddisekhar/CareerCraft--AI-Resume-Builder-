@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon index.js",
-    "start": "nodemon index.js"
+    "start": "nodemon index.js",
+    "init-db": "node helpers/setup_database.js"
   },
   "dependencies": {
     "axios": "^1.13.5",
