@@ -149,8 +149,8 @@ export default function Register() {
 
               <Link to="/" className="inline-block">
                 <img
-                  src={images.logo6 || "/logo6.png"}
-                  alt="UptoSkills Logo"
+                  src={images.careercraft_logo || "/careercraft_logo.png"}
+                  alt="CareerCraft AI"
                   className="w-28 mx-auto mt-2 mb-3"
                 />
               </Link>

@@ -47,7 +47,7 @@ export default function ForgotPassword() {
               <p className="text-sm text-center text-gray-600">
                 Enter your email to reset your password
               </p>
-              <img src={images.logo || '/logo.png'} alt="Logo" className="w-32 my-2" />
+              <img src={images.careercraft_logo || '/careercraft_logo.png'} alt="CareerCraft AI" className="w-40 my-2" />
             </div>
             <form className="mt-6">
               <div className="mb-4">

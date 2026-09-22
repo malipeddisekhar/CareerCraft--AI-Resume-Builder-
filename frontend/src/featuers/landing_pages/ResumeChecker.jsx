@@ -382,7 +382,7 @@ const AIResumeChecker = () => {
             >
               <h4 className="flex items-center gap-2 mb-4 text-xs font-bold tracking-widest text-red-400 uppercase transition-colors group-hover:text-red-500">
                 <AlertCircle size={16} className="group-hover:animate-pulse" />{" "}
-                Before UptoSkills
+                Before CareerCraft AI
               </h4>
               <div className="space-y-3 blur-[1px] group-hover:blur-0 transition-all duration-500">
                 <div className="w-3/4 h-4 rounded bg-white/10 group-hover:bg-white/20"></div>

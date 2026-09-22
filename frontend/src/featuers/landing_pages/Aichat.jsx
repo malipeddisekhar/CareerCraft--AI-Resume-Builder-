@@ -18,7 +18,7 @@ export default function Aichat() {
       : [
           {
             from: "bot",
-            text: "Hi! I'm the UpToSkills AI Resume Assistant.\nHow can I help you today?",
+            text: "Hi! I'm the CareerCraft AI Resume Assistant.\nHow can I help you today?",
           },
         ];
   });
@@ -326,7 +326,7 @@ The fastest way to improve your ATS score is to use the **AI Resume Builder**. H
     setMessages([
       {
         from: "bot",
-        text: "Hi! I'm the UpToSkills AI Resume Assistant.\nHow can I help you today?",
+        text: "Hi! I'm the CareerCraft AI Resume Assistant.\nHow can I help you today?",
       },
     ]);
     sessionStorage.setItem(
@@ -334,7 +334,7 @@ The fastest way to improve your ATS score is to use the **AI Resume Builder**. H
       JSON.stringify([
         {
           from: "bot",
-          text: "Hi! I'm the UpToSkills AI Resume Assistant.\nHow can I help you today?",
+          text: "Hi! I'm the CareerCraft AI Resume Assistant.\nHow can I help you today?",
         },
       ]),
     );
@@ -368,7 +368,7 @@ The fastest way to improve your ATS score is to use the **AI Resume Builder**. H
               AI Assistant
             </div>
             <span className="text-[11px] text-slate-400">
-              Powered by UpToSkills AI
+              Powered by CareerCraft AI
             </span>
           </div>
 

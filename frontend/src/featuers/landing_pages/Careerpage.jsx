@@ -72,7 +72,7 @@ const CareersPage = () => {
               </h1>
 
               <p className="max-w-xl mx-auto mb-7 text-xl font-medium leading-relaxed text-gray-500 lg:mx-0">
-                At UptoSkills, we're building the most advanced AI resume engine
+                At CareerCraft AI, we're building the most advanced AI resume engine
                 on the planet. Help us bridge the gap between talent and
                 opportunity.
               </p>
@@ -98,7 +98,7 @@ const CareersPage = () => {
               {/* Decorative element behind image */}
               <img
                 src={career}
-                alt="UptoSkills Career"
+                alt="CareerCraft AI Career"
                 className="object-cover w-full h-auto"
               />
 
@@ -253,7 +253,7 @@ const CareersPage = () => {
                   type="button"
                   onClick={() => {
                     window.open(
-                      `https://uptoskills.com/homeJobs#${job.title.replace(/\s+/g, "-").toLowerCase()}`,
+                      `#${job.title.replace(/\s+/g, "-").toLowerCase()}`,
                       "_blank",
                       "noopener,noreferrer",
                     );
@@ -290,7 +290,7 @@ const CareersPage = () => {
               type="button"
               onClick={() =>
                 window.open(
-                  "https://uptoskills.com/homeJobs",
+                  "#",
                   "_blank",
                   "noopener,noreferrer",
                 )

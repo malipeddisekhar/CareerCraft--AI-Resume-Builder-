@@ -184,7 +184,7 @@ function LandingPage() {
           <div className="flex flex-col gap-4 md:gap-6 text-center md:text-left items-center md:items-start w-full max-w-xl mx-auto md:mx-0">
             <motion.h1 variants={fadeUp} className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight select-none font-jakarta">
               <span className="bg-gradient-to-r from-[#e65100] to-[#ff8f00] bg-clip-text text-transparent">
-                UptoSkills AI
+                CareerCraft AI
               </span>{" "}
               <span className="bg-gradient-to-r from-[#0077cc] to-[#0056b3] bg-clip-text text-transparent">
                 Resume Builder

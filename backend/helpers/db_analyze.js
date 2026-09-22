@@ -2,9 +2,12 @@ import pg from 'pg';
 import fs from 'fs';
 const { Client } = pg;
 
+import dotenv from 'dotenv';
+dotenv.config();
+
 async function checkDb() {
     const client = new Client({
-        connectionString: 'postgresql://postgres.mwrkrtelawgepjqwhmeh:uptoskills9090@aws-1-ap-south-1.pooler.supabase.com:5432/postgres'
+        connectionString: process.env.POSTGRESQL_URI
     });
     
     await client.connect();

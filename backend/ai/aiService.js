@@ -27,7 +27,7 @@ async function getAIResponse(prompt, temperature) {
         headers: {
           Authorization: `Bearer ${apiKey}`,
           "HTTP-Referer": process.env.SITE_URL || "http://localhost:3000",
-          "X-Title": "UpToSkills AI Resume Builder",
+          "X-Title": "CareerCraft AI Resume Builder",
           "Content-Type": "application/json"
         }
       }
@@ -551,7 +551,7 @@ export async function chatBotAPIResponse(userQuestion, history, isLoggedin) {
       .join("\n");
 
     const prompt = `
-      You are an AI assistant for **UpToSkills AI Resume Builder**.
+      You are an AI assistant for **CareerCraft AI Resume Builder**.
 
       ==============================
       RESPONSE FORMAT (MANDATORY)
@@ -668,7 +668,7 @@ export async function chatBotAPIResponse(userQuestion, history, isLoggedin) {
 
       Respond only:
 
-      👋 Hello! I'm your UpToSkills AI Assistant  
+      👋 Hello! I'm your CareerCraft AI Assistant  
       How can I help you today?
 
       ==============================
@@ -679,7 +679,7 @@ export async function chatBotAPIResponse(userQuestion, history, isLoggedin) {
 
       ### 🚀 Platform Features
 
-      UpToSkills provides AI-powered tools to help you create professional career documents quickly.
+      CareerCraft AI provides AI-powered tools to help you create professional career documents quickly.
 
       - **📝 Resume Builder** - Create professional resumes easily.  
         [Know More](/how-to-write-a-resume)
@@ -762,7 +762,7 @@ export async function chatBotAPIResponse(userQuestion, history, isLoggedin) {
 
       ### 📝 Steps to Build a Resume
 
-      Creating a professional resume with UpToSkills is simple. Follow these steps:
+      Creating a professional resume with CareerCraft AI is simple. Follow these steps:
 
       1. **Log in to your account**  
         Access your account from the login page.
@@ -793,10 +793,10 @@ export async function chatBotAPIResponse(userQuestion, history, isLoggedin) {
       ---
       ### 📄 Steps to Create a CV
 
-      Creating a professional CV with UpToSkills is quick and easy. Follow these steps:
+      Creating a professional CV with CareerCraft AI is quick and easy. Follow these steps:
 
       1. **Log in to your account**  
-        Access your UpToSkills account.
+        Access your CareerCraft AI account.
 
       2. **Open the Dashboard**  
         Navigate to your personal workspace.
@@ -829,10 +829,10 @@ export async function chatBotAPIResponse(userQuestion, history, isLoggedin) {
       Follow these steps to generate a professional cover letter:
       ### ✉️ Steps to Generate a Cover Letter
 
-      Creating a professional cover letter with UpToSkills is quick and simple. Follow these steps:
+      Creating a professional cover letter with CareerCraft AI is quick and simple. Follow these steps:
 
       1. **Log in to your account**  
-        Access your UpToSkills account.
+        Access your CareerCraft AI account.
 
       2. **Open the Dashboard**  
         Navigate to your personal workspace.
@@ -928,7 +928,7 @@ LIVE PLATFORM STATS (as of now):
 `;
 
     const prompt = `
-You are an intelligent Admin AI Assistant for the UpToSkills platform.
+You are an intelligent Admin AI Assistant for the CareerCraft AI platform.
 You have access to live platform data and help the admin understand and navigate the admin panel.
 
 ==============================
@@ -984,7 +984,7 @@ GREETING RULE
 ==============================
 
 If admin says hi/hello/hey respond:
-👋 Hello Admin! I'm your UpToSkills Admin Assistant.
+👋 Hello Admin! I'm your CareerCraft AI Admin Assistant.
 How can I help you manage the platform today?
 
 ==============================

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import UpToSkillsImg from "../assets/logo6.png";
+import CareerCraftLogo from "../assets/careercraft_logo.png";
 import axiosInstance from "../api/axios";
 import {
   Menu,
@@ -205,7 +205,7 @@ export default function NavBar() {
             className="flex items-center gap-2 sm:gap-3 focus:outline-none flex-shrink-0 order-2 lg:order-1"
             aria-label="Go to home"
           >
-            <img src={UpToSkillsImg} alt="UptoSkills Logo" className="w-24 sm:w-32 md:w-36 lg:w-[160px]" />
+            <img src={CareerCraftLogo} alt="CareerCraft AI" className="w-24 sm:w-32 md:w-36 lg:w-[160px]" />
           </button>
 
           {/* Desktop Navigation */}
@@ -418,8 +418,8 @@ export default function NavBar() {
           {/* Sidebar Header */}
           <div className="flex items-center justify-between p-6 border-b border-gray-200">
             <img
-              src={UpToSkillsImg}
-              alt="UptoSkills Logo"
+              src={CareerCraftLogo}
+              alt="CareerCraft AI"
               className="w-[120px]"
             />
             <button

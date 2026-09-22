@@ -37,8 +37,8 @@ export default function VerifyEmail() {
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
         <img
-          src={images.logo6 || "/logo6.png"}
-          alt="UptoSkills Logo"
+          src={images.careercraft_logo || "/careercraft_logo.png"}
+          alt="CareerCraft AI"
           className="w-32 mx-auto mb-6"
         />
         <h2 className="text-3xl font-extrabold text-gray-900">

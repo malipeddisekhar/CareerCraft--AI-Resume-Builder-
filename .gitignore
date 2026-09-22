@@ -1,6 +1,9 @@
 /templates/
 node_modules/
+**/node_modules/
 .env
+**/.env
+*.env*
 .DS_Store
 dist/
 build/

@@ -29,27 +29,27 @@ export const subscribeNewsletter = async (req, res) => {
     });
 
     const mailOptions = {
-      from: process.env.EMAIL_USER || '"UptoSkills AI" <no-reply@uptoskills.com>',
+      from: process.env.EMAIL_USER || '"CareerCraft AI" <no-reply@careercraft.ai>',
       to: email,
-      subject: "Welcome to UptoSkills AI Resume Builder",
-      text: "Welcome to UptoSkills AI Resume Builder!\nCongratulations! You have signed up for UptoSkills AI Resume Builder.\n\nWe are excited to help you empower your skills and build your dream career.\n\nBest Regards,\nThe UptoSkills Team",
+      subject: "Welcome to CareerCraft AI Resume Builder",
+      text: "Welcome to CareerCraft AI Resume Builder!\nCongratulations! You have signed up for CareerCraft AI Resume Builder.\n\nWe are excited to help you empower your skills and build your dream career.\n\nBest Regards,\nThe CareerCraft AI Team",
       html: `
         <div style="font-family: Arial, sans-serif; padding: 20px; text-align: center;">
           <div style="margin: 0 auto 20px auto; text-align: center;">
-             <img src="cid:uptoskillsLogo" alt="UptoSkills Logo" style="width: 200px; height: auto;" />
+             <img src="cid:careerCraftLogo" alt="CareerCraft AI Logo" style="width: 200px; height: auto;" />
           </div>
-          <h2 style="color: #1a2e52;">Welcome to UptoSkills AI Resume Builder!</h2>
-          <p style="font-size: 16px; color: #333;"><strong>Congratulations! You have signed up for UptoSkills AI Resume Builder.</strong></p>
+          <h2 style="color: #1a2e52;">Welcome to CareerCraft AI Resume Builder!</h2>
+          <p style="font-size: 16px; color: #333;"><strong>Congratulations! You have signed up for CareerCraft AI Resume Builder.</strong></p>
           <p style="font-size: 14px; color: #555;">We are excited to help you empower your skills and build your dream career.</p>
           <br/>
-          <p style="font-size: 14px; color: #777;">Best Regards,<br/><strong>The UptoSkills Team</strong></p>
+          <p style="font-size: 14px; color: #777;">Best Regards,<br/><strong>The CareerCraft AI Team</strong></p>
         </div>
       `,
       attachments: [
         {
-          filename: 'logo6.png',
-          path: path.resolve(__dirname, "../../frontend/src/assets/logo6.png"),
-          cid: 'uptoskillsLogo'
+          filename: 'careercraft_logo.png',
+          path: path.resolve(__dirname, "../../frontend/src/assets/careercraft_logo.png"),
+          cid: 'careerCraftLogo'
         }
       ]
     };

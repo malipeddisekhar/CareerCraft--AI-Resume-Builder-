@@ -127,8 +127,8 @@ export default function Login() {
               <p className="text-xs text-gray-500 mt-1">by</p>
               <Link to="/" className="inline-block">
                 <img
-                  src={images.logo6 || "/logo6.png"}
-                  alt="UptoSkills Logo"
+                  src={images.careercraft_logo || "/careercraft_logo.png"}
+                  alt="CareerCraft AI"
                   className="w-28 mx-auto mt-2 mb-4"
                 />
               </Link>

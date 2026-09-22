@@ -77,7 +77,7 @@ export default function ResetPassword() {
               <p className="text-sm text-center text-gray-600 mt-2">
                 Enter a strong password for your account
               </p>
-              <img src={images.logo || '/logo.png'} alt="Logo" className="w-32 my-4" />
+              <img src={images.careercraft_logo || '/careercraft_logo.png'} alt="CareerCraft AI" className="w-40 my-4" />
             </div>
             
             <form className="mt-4" onSubmit={handleResetPassword}>

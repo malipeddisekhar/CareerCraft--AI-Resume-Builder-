@@ -114,7 +114,7 @@ export const login = async (req, res) => {
       // 🔔 USER notification
       await pool.query(
         'INSERT INTO notifications (user_id, type, message, is_read, actor,created_at,updated_at) VALUES ($1, $2, $3, false, $4,NOW(),NOW())',
-        [user.id, "FIRST_LOGIN", "Welcome to UptoSkills AI Resume Builder 🎉", "system"]
+        [user.id, "FIRST_LOGIN", "Welcome to CareerCraft AI Resume Builder 🎉", "system"]
       );
     }
 
@@ -198,9 +198,9 @@ export const forgotPassword = async (req, res) => {
     });
 
     const mailOptions = {
-      from: process.env.EMAIL_USER || '"UptoSkills AI" <no-reply@uptoskills.com>',
+      from: process.env.EMAIL_USER || '"CareerCraft AI" <no-reply@careercraft.ai>',
       to: email,
-      subject: "Password Reset Request - UptoSkills AI Resume Builder",
+      subject: "Password Reset Request - CareerCraft AI Resume Builder",
       html: `
         <div style="font-family: Arial, sans-serif; padding: 20px; text-align: center; max-width: 500px; margin: 0 auto; border: 1px solid #ddd; border-radius: 10px;">
           <h2 style="color: #1a2e52;">Reset Your Password</h2>
@@ -210,7 +210,7 @@ export const forgotPassword = async (req, res) => {
           <p style="font-size: 12px; color: #999;">If the button doesn't work, copy and paste this link into your browser: <br/>${resetLink}</p>
           <p style="font-size: 12px; color: #999;">If you didn't request a password reset, you can safely ignore this email.</p>
           <br/>
-          <p style="font-size: 14px; color: #777;">Best Regards,<br/><strong>The UptoSkills Team</strong></p>
+          <p style="font-size: 14px; color: #777;">Best Regards,<br/><strong>The CareerCraft AI Team</strong></p>
         </div>
       `,
     };
@@ -360,9 +360,9 @@ export const sendVerificationEmail = async (req, res) => {
     });
 
     const mailOptions = {
-      from: process.env.EMAIL_USER || '"UptoSkills AI" <no-reply@uptoskills.com>',
+      from: process.env.EMAIL_USER || '"CareerCraft AI" <no-reply@careercraft.ai>',
       to: email,
-      subject: "Verify Your Email - UptoSkills AI Resume Builder",
+      subject: "Verify Your Email - CareerCraft AI Resume Builder",
       html: `
         <div style="font-family: Arial, sans-serif; padding: 20px; text-align: center; max-width: 500px; margin: 0 auto; border: 1px solid #ddd; border-radius: 10px;">
           <h2 style="color: #1a2e52;">Verify Your Email</h2>
@@ -371,7 +371,7 @@ export const sendVerificationEmail = async (req, res) => {
           <a href="${verificationLink}" style="display: inline-block; padding: 12px 24px; margin: 20px 0; background-color: #2563eb; color: #fff; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 16px;">Verify Email</a>
           <p style="font-size: 12px; color: #999;">If the button doesn't work, copy and paste this link into your browser: <br/>${verificationLink}</p>
           <br/>
-          <p style="font-size: 14px; color: #777;">Best Regards,<br/><strong>The UptoSkills Team</strong></p>
+          <p style="font-size: 14px; color: #777;">Best Regards,<br/><strong>The CareerCraft AI Team</strong></p>
         </div>
       `,
     };

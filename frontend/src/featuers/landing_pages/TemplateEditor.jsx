@@ -65,10 +65,10 @@ function TemplateEditor({ template }) {
               onClick={() => navigate('/')}
               className="text-2xl font-extrabold tracking-wide font-['Space_Grotesk'] hover:opacity-80 transition-opacity"
             >
-              UPTO<span className="text-[#00d9ff]">SKILLS</span>
+              CareerCraft<span className="text-[#0077cc]"> AI</span>
             </button>
             <div className="hidden md:block h-8 w-px bg-white/20"></div>
-            <span className="hidden md:inline text-gray-400">Editing: <span className="text-[#00d9ff] font-semibold">{template?.name || 'Custom'}</span> Template</span>
+            <span className="hidden md:inline text-gray-400">Editing: <span className="text-[#0077cc] font-semibold">{template?.name || 'Custom'}</span> Template</span>
           </div>
           <button 
             onClick={() => navigate('/')}

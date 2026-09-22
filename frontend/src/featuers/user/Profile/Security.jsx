@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { X, Eye, EyeOff, Loader2 } from "lucide-react";
 import axios from "../../../api/axios";
-import logo from "../../../assets/UptoSkills.webp";
+import logo from "../../../assets/careercraft_icon.png";
 import UserNavBar from "../UserNavBar/UserNavBar";
 
 export default function Security() {

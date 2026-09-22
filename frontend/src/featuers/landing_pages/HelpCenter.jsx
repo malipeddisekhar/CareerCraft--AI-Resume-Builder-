@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import UpToSkillsImg from '../../assets/UptoSkills.webp';
+import CareerCraftIcon from '../../assets/careercraft_icon.png';
 import NavBar from '../../components/NavBar';
 import Footer from "./Footer";
 
@@ -35,7 +35,7 @@ function HelpCenter() {
                     </div>
 
                     <p className="text-lg text-gray-700 mb-8 leading-relaxed">
-                        The UptoSkills AI Resume Builder simplifies the transition from a blank page to a polished career document. Our guided process ensures no critical information is overlooked.
+                        The CareerCraft AI Resume Builder simplifies the transition from a blank page to a polished career document. Our guided process ensures no critical information is overlooked.
                     </p>
                     <div className="space-y-8">
                         <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
@@ -620,7 +620,7 @@ function HelpCenter() {
                         <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
                             <h3 className="text-lg font-semibold text-gray-900 mb-2 flex items-center">
                                 <i className="fas fa-cog text-purple-500 mr-3"></i>
-                                UptoSkills Test Tool
+                                CareerCraft AI Test Tool
                             </h3>
                             <p className="text-gray-700">Use our built-in simulator to see exactly what an ATS sees when it parses your file.</p>
                         </div>
@@ -741,7 +741,7 @@ function HelpCenter() {
                     </div>
 
                     <p className="text-lg text-gray-700 mb-8 leading-relaxed">
-                        UptoSkills allows you to create a Live Link for your resume.
+                        CareerCraft AI allows you to create a Live Link for your resume.
                     </p>
 
                     <div className="space-y-6">
@@ -1015,7 +1015,7 @@ function HelpCenter() {
             icon: "fas fa-credit-card",
             color: "from-gray-500 to-slate-600",
             Guides: [
-                { id: "account-setup", title: "Account Setup", desc: "Set up and configure your UptoSkills account" },
+                { id: "account-setup", title: "Account Setup", desc: "Set up and configure your CareerCraft AI account" },
                 { id: "subscription-plans", title: "Subscription Plans", desc: "Understanding our pricing and features" },
                 { id: "billing-management", title: "Billing Management", desc: "Manage payments and billing information" },
                 { id: "account-security", title: "Account Security", desc: "Keep your account safe and secure" }

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import UpToSkillsImg from "../../assets/logo6.png";
+import CareerCraftLogo from "../../assets/careercraft_logo.png";
 import { ChevronDown } from "lucide-react";
 import axiosInstance from "../../api/axios";
 // Import React Icons
@@ -29,17 +29,17 @@ function Footer() {
     {
       icon: <SiInstagram className="w-3 h-3 sm:w-4 sm:h-4 md:w-[18px] md:h-[18px]" />,
       bgColor: "bg-gradient-to-tr from-[#f9ce34] via-[#ee2a7b] to-[#6228d7]",
-      href: "https://www.instagram.com/uptoskills?utm_medium=copy_link",
+      href: "#",
     },
     {
       icon: <SiLinkedin className="w-3 h-3 sm:w-4 sm:h-4 md:w-[18px] md:h-[18px]" />,
       bgColor: "bg-[#0077b5]",
-      href: "https://www.linkedin.com/company/uptoskills/posts/?feedView=all",
+      href: "#",
     },
     {
       icon: <SiFacebook className="w-3 h-3 sm:w-4 sm:h-4 md:w-[18px] md:h-[18px]" />,
       bgColor: "bg-[#1877f2]",
-      href: "https://www.facebook.com/Uptoskills/",
+      href: "#",
     },
   ];
 
@@ -88,7 +88,7 @@ function Footer() {
           {/* 1. BRAND & NEWSLETTER - Full width on mobile, 2 columns on tablet */}
           <div className="flex flex-col items-center md:items-start text-center md:text-left col-span-1 sm:col-span-2 md:row-span-2 lg:row-span-1 lg:col-span-1 h-full">
             <img
-              src={UpToSkillsImg}
+              src={CareerCraftLogo}
               alt="Logo"
               className="w-20 sm:w-24 md:w-28 lg:w-32 mb-3 sm:mb-4 transition-opacity cursor-pointer hover:opacity-80"
               onClick={() => navigate("/")}
@@ -362,7 +362,7 @@ function Footer() {
         {/* BOTTOM BAR */}
         <div className="flex flex-col items-center justify-between gap-3 sm:gap-4 md:gap-6 pt-4 sm:pt-6 md:pt-8 border-t border-gray-100 md:flex-row">
           <p className="text-[9px] sm:text-[10px] md:text-[11px] font-bold text-gray-400 uppercase tracking-widest text-center md:text-left">
-            ©️ {new Date().getFullYear()} UptoSkills Inc.
+            ©️ {new Date().getFullYear()} CareerCraft AI.
           </p>
 
           <div className="flex items-center gap-0.5 sm:gap-1 text-[10px] sm:text-[11px] md:text-[13px] font-black tracking-tight">

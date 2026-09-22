@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import UptoSkillsLogo from "../../../assets/logo6.png";
+import CareerCraftLogo from "../../../assets/careercraft_logo.png";
 import { useUserNotifications } from "../../../context/UserNotificationContext";
 import axiosInstance from "../../../api/axios";
 import formatTimeAgo from "../../../utils/formatTimeAgo";
@@ -169,8 +169,8 @@ export default function UserNavbar() {
             whileTap={{ scale: 0.98 }}
           >
             <img
-              src={UptoSkillsLogo}
-              alt="UptoSkills"
+              src={CareerCraftLogo}
+              alt="CareerCraft AI"
               className="w-44 h-11 object-contain transition-all duration-300 pl-6"
             />
           </motion.div>

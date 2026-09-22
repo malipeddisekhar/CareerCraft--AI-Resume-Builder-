@@ -1,4 +1,4 @@
-# AI Resume Builder
+# CareerCraft AI - Resume Builder
 
 A full-stack web application that helps users build professional resumes with modern templates, AI-assisted writing, export options, and user-focused productivity features.
 
@@ -91,8 +91,8 @@ AI-Resume-Builder/
 ### 1) Clone the repository
 
 ```bash
-git clone https://github.com/Hemu2174/AI-Resume-Builder.git
-cd AI-Resume-Builder
+git clone https://github.com/malipeddisekhar/CareerCraft--AI-Resume-Builder-.git
+cd CareerCraft--AI-Resume-Builder-
 ```
 
 ### 2) Install backend dependencies

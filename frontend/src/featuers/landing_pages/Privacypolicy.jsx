@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import UpToSkillsImg from "../../assets/UptoSkills.webp";
+import CareerCraftIcon from "../../assets/careercraft_icon.png";
 
 import NavBar from "../../components/NavBar";
 import Footer from "./Footer";
@@ -107,7 +107,7 @@ export default function PrivacyPolicy() {
       icon: "fa-bell",
       title: "Policy Updates & Notifications",
       content:
-        "We may update this Privacy Policy periodically to reflect changes in our practices or legal requirements. When significant changes occur, we will notify you. Continued use of UpToSkills after updates constitutes acceptance of the revised policy.",
+        "We may update this Privacy Policy periodically to reflect changes in our practices or legal requirements. When significant changes occur, we will notify you. Continued use of CareerCraft AI after updates constitutes acceptance of the revised policy.",
       color: "orange"
     },
   ];
@@ -141,7 +141,7 @@ const [cardsRef, cardsVisible] = useInView(0.1);
           </div>
 
           <p className="max-w-2xl mx-auto text-base sm:text-lg text-gray-600 px-4">
-            Learn how UpToSkills - AI Resume Builder protects your personal
+            Learn how CareerCraft AI - Resume Builder protects your personal
             information and respects your privacy.
           </p>
         </div>

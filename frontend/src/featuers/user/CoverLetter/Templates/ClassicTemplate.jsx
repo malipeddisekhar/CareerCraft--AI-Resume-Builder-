@@ -151,7 +151,7 @@ const ClassicTemplate = memo(({ formData }) => {
 
       {/* Formal Closing */}
       <div className="mt-20 px-8 py-10 border-t-4 border-double border-gray-100 flex justify-between items-center">
-         <div className="text-[10px] font-bold text-gray-200 uppercase tracking-widest italic select-none">Transmitted via UpToSkills AI</div>
+         <div className="text-[10px] font-bold text-gray-200 uppercase tracking-widest italic select-none">Transmitted via CareerCraft AI</div>
          <div className="text-right">
             <p className="text-sm font-bold italic text-gray-400 mb-8">{customSalutation || salutation || "Yours Respectfully"},</p>
             <p className="text-4xl font-bold text-gray-900 tracking-tighter italic decoration-gray-100 underline decoration-[10px] underline-offset-[-2px]">{fullName}</p>

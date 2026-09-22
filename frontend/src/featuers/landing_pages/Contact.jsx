@@ -193,7 +193,7 @@ function Contact() {
             {/* COMPACT Contact Method Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full max-w-[900px] mb-16">
               <a
-                href="mailto:info@uptoskills.com"
+                href="mailto:info@careercraft.ai"
                 className="group p-6 bg-white border border-gray-100 rounded-[1.5rem] hover:shadow-xl hover:border-blue-100 transition-all duration-300 hover:-translate-y-1"
               >
                 <div className="flex items-center justify-center w-12 h-12 mx-auto mb-4 text-green-600 transition-transform bg-green-50 rounded-xl group-hover:scale-110">
@@ -489,7 +489,7 @@ function Contact() {
 
             {/* EMAIL CARD */}
             <a
-              href="mailto:info@uptoskills.com"
+              href="mailto:info@careercraft.ai"
               className="flex items-center gap-5 p-8 transition-all duration-300 group hover:bg-gray-50/50"
             >
               <div className="flex items-center justify-center text-blue-600 transition-all duration-500 bg-white border border-gray-100 shadow-sm w-14 h-14 rounded-2xl group-hover:bg-blue-600 group-hover:text-white">
@@ -500,7 +500,7 @@ function Contact() {
                   Email Support
                 </span>
                 <span className="text-base font-bold text-[#1a2e52]">
-                  info@uptoskills.com
+                  info@careercraft.ai
                 </span>
               </div>
             </a>

@@ -73,7 +73,7 @@ const TermsAndConditions = () => {
                 Acceptance of Terms
               </h2>
               <p className="text-lg leading-relaxed text-gray-600">
-                By accessing or using the UptoSkills website and our AI Resume
+                By accessing or using the CareerCraft AI website and our AI Resume
                 Builder, you agree to comply with and be bound by these Terms of
                 Service. These terms apply to all visitors, users, and others
                 who access or use the Service. If you do not agree with any part
@@ -89,10 +89,10 @@ const TermsAndConditions = () => {
                 Intellectual Property
               </h2>
               <p className="text-lg leading-relaxed text-gray-600">
-                All content available on the UptoSkills website, including but
+                All content available on the CareerCraft AI website, including but
                 not limited to text, graphics, logos, resume templates, AI
                 algorithms, and software, is the exclusive property of
-                UptoSkills and is protected by applicable intellectual property
+                CareerCraft AI and is protected by applicable intellectual property
                 laws. You may not use, modify, reproduce, distribute, or create
                 derivative works from any content without our prior written
                 permission.
@@ -107,7 +107,7 @@ const TermsAndConditions = () => {
                 Use of the Website
               </h2>
               <p className="text-lg leading-relaxed text-gray-600">
-                You are permitted to use the UptoSkills AI Resume Builder solely
+                You are permitted to use the CareerCraft AI Resume Builder solely
                 for personal career development purposes. You agree not to
                 engage in:
               </p>
@@ -142,7 +142,7 @@ const TermsAndConditions = () => {
                 </h3>
                 <p className="relative z-10 text-lg leading-relaxed text-gray-600">
                   Our AI provides suggestions based on industry patterns and
-                  available data. UptoSkills does not guarantee the accuracy,
+                  available data. CareerCraft AI does not guarantee the accuracy,
                   completeness, or reliability of AI-generated content. Users
                   are responsible for reviewing and verifying all information in
                   their resumes before submission to employers.
@@ -175,7 +175,7 @@ const TermsAndConditions = () => {
                 Limitation of Liability
               </h2>
               <p className="p-6 text-lg italic leading-relaxed text-gray-600 border bg-slate-50 rounded-2xl border-slate-100">
-                To the fullest extent permitted by applicable law, UptoSkills
+                To the fullest extent permitted by applicable law, CareerCraft AI
                 and its affiliates shall not be liable for any direct, indirect,
                 incidental, consequential, or special damages (including but not
                 limited to loss of job opportunities) arising from your use of
@@ -198,7 +198,7 @@ const TermsAndConditions = () => {
               <p className="mb-1 text-xs font-bold tracking-widest text-gray-400 uppercase">
                 Email
               </p>
-              <p className="text-sm font-bold">info@uptoskills.com</p>
+              <p className="text-sm font-bold">info@careercraft.ai</p>
             </motion.div>
             <motion.div
               variants={fadeUp}
