@@ -77,7 +77,10 @@ export default function ForgotPassword() {
               </Link>
             </p>
             <p className="mt-4 text-xs text-center text-gray-400">
-              &copy; 2025 AI Resume Builder. All rights reserved.
+              ©️ {new Date().getFullYear()}{" "}
+              <span className="font-bold text-[#1a2e52]">CareerCraft</span>
+              <span className="font-black bg-gradient-to-r from-blue-500 to-orange-500 bg-clip-text text-transparent"> AI</span>
+              {" "}· Resume Builder · All rights reserved.
             </p>
           </div>
         </div>

@@ -266,6 +266,21 @@ const ProfileOverview = () => {
         <div className="mt-6">
           <DangerZone userId={profileData.id} />
         </div>
+        <footer className="mt-8 py-4 bg-white border-t">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-1 px-6">
+            <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">
+              ©️ {new Date().getFullYear()}{" "}
+              <span className="text-[#1a2e52]">CareerCraft</span>
+              <span className="bg-gradient-to-r from-blue-500 to-orange-500 bg-clip-text text-transparent font-black"> AI</span>
+              <span className="text-gray-400 font-medium"> · Resume Builder · All rights reserved.</span>
+            </p>
+            <div className="flex items-center gap-1 text-[10px] font-black tracking-tight">
+              <span className="text-[#1a2e52]">Dream Big.</span>
+              <span className="text-blue-500">Skill Up.</span>
+              <span className="text-orange-500">Fly High!</span>
+            </div>
+          </div>
+        </footer>
       </div>
     </div>
   );

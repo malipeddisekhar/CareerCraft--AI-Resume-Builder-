@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Outlet } from "react-router-dom";
 import AdminNavbar from "./AdminNavBar/AdminNavBar";
 import AdminSidebar from "./AdminSidebar/AdminSidebar";
+import AdminFooter from "./AdminFooter";
 import { NotificationProvider } from "../../context/NotificationContext";
 
 export default function AdminLayout() {
@@ -33,13 +34,16 @@ export default function AdminLayout() {
 
       <main
         className={`
-          pt-16 md:pt-0 min-h-screen bg-slate-50
+          pt-16 md:pt-0 min-h-screen bg-slate-50 flex flex-col
           transition-all duration-300 ease-in-out
           ${isCollapsed ? "md:ml-20" : "md:ml-64"}
         `}
       >
-        <Outlet />
+        <div className="flex-1">
+          <Outlet />
+        </div>
+        <AdminFooter />
       </main>
     </NotificationProvider>
   );
-}
+}

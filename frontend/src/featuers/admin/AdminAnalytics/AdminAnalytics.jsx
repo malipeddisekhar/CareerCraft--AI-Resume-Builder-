@@ -556,10 +556,7 @@ export default function AdminAnalytics() {
         </div>
       </div>
 
-      {/* Footer */}
-      <footer className="mt-14 text-center text-sm text-slate-500">
-        © {new Date().getFullYear()} AI Resume Builder · Analytics
-      </footer>
+
     </div>
   );
 }

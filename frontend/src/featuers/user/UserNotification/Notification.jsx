@@ -383,8 +383,20 @@ const Notification = () => {
             </motion.div>
           )}
         </AnimatePresence>
-        <footer className="fixed bottom-0 left-0 right-0 text-center py-4 bg-white border-t text-sm text-gray-600 z-10">
-          © {new Date().getFullYear()} ResumeAI Inc. All rights reserved.
+        <footer className="fixed bottom-0 left-0 right-0 py-3 bg-white border-t z-10">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-1 px-6">
+            <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">
+              ©️ {new Date().getFullYear()}{" "}
+              <span className="text-[#1a2e52]">CareerCraft</span>
+              <span className="bg-gradient-to-r from-blue-500 to-orange-500 bg-clip-text text-transparent font-black"> AI</span>
+              <span className="text-gray-400 font-medium"> · Resume Builder · All rights reserved.</span>
+            </p>
+            <div className="flex items-center gap-1 text-[10px] font-black tracking-tight">
+              <span className="text-[#1a2e52]">Dream Big.</span>
+              <span className="text-blue-500">Skill Up.</span>
+              <span className="text-orange-500">Fly High!</span>
+            </div>
+          </div>
         </footer>
       </div>
     </>
