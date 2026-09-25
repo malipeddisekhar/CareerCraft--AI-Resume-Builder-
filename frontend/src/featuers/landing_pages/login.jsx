@@ -53,8 +53,6 @@ export default function Login() {
         rememberMe: rememberMe,
       });
 
-      console.log("Login response:", response.data);
-
       const isAdmin = response.data.isAdmin || false;
 
       // Storage logic based on Remember Me

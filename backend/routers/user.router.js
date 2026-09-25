@@ -1,5 +1,6 @@
 import express from "express";
 import isAuth from "../middlewares/isAuth.js";
+import isAdmin from "../middlewares/isAdmin.js";
 import {
   getDashboardData,
   getAllUsers,
@@ -26,11 +27,12 @@ userRouter.get("/profile/:id", isAuth, getUserName);
 userRouter.post("/request-admin", isAuth, requestAdminAccess);
 
 
-// ---- Admin User Routes (DYNAMIC LAST) ----
-userRouter.get("/", isAuth, getAllUsers);
-userRouter.put("/:id", isAuth, updateUser);
-userRouter.delete("/:id", isAuth, deleteUser);
-userRouter.put("/approve-admin/:id", isAuth, approveAdminRequest);
-userRouter.put("/reject-admin/:id", isAuth, rejectAdminRequest);
+// ---- Admin User Routes (DYNAMIC LAST — Admin only) ----
+userRouter.get("/", isAuth, isAdmin, getAllUsers);
+userRouter.put("/:id", isAuth, isAdmin, updateUser);
+userRouter.delete("/:id", isAuth, isAdmin, deleteUser);
+userRouter.put("/approve-admin/:id", isAuth, isAdmin, approveAdminRequest);
+userRouter.put("/reject-admin/:id", isAuth, isAdmin, rejectAdminRequest);
 
 export default userRouter;
+

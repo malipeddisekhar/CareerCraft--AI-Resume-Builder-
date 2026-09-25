@@ -124,8 +124,6 @@ export const login = async (req, res) => {
     } catch (e) {
       // If column is named something else or doesn't exist, we just suppress
     }
-    console.log("USER ID:", user.id);
-    console.log("EMAIL:", user.email);
     const token = genrateToken(
       {
         id: user.id,
@@ -217,11 +215,20 @@ export const forgotPassword = async (req, res) => {
 
     if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
       console.warn("⚠️ Email credentials missing. Check .env");
-      return res.status(200).json({ success: true, message: "Simulated password reset link. Token: " + token });
+      return res.status(200).json({ success: true, message: "Dev mode: email not configured. Token: " + token, devToken: token });
     }
 
-    await transporter.sendMail(mailOptions);
-    res.status(200).json({ success: true, message: "Password reset link sent to your email" });
+    try {
+      await transporter.sendMail(mailOptions);
+      res.status(200).json({ success: true, message: "Password reset link sent to your email" });
+    } catch (emailError) {
+      console.error("⚠️ Email send failed (check Gmail App Password):", emailError.message);
+      const isDev = process.env.NODE_ENV !== 'production';
+      if (isDev) {
+        return res.status(200).json({ success: true, message: "Dev mode: email send failed, token returned for testing", devToken: token });
+      }
+      return res.status(500).json({ message: "Failed to send password reset email", error: emailError.message });
+    }
   } catch (error) {
     console.error("forgotPassword error:", error);
     res.status(500).json({
@@ -378,11 +385,21 @@ export const sendVerificationEmail = async (req, res) => {
 
     if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
       console.warn("⚠️ Email credentials missing. Check .env");
-      return res.status(200).json({ message: "Simulated verification. Token: " + token });
+      return res.status(200).json({ success: true, message: "Dev mode: email not configured. Token: " + token, devToken: token });
     }
 
-    await transporter.sendMail(mailOptions);
-    res.status(200).json({ message: "Verification email sent!" });
+    try {
+      await transporter.sendMail(mailOptions);
+      res.status(200).json({ success: true, message: "Verification email sent!" });
+    } catch (emailError) {
+      console.error("⚠️ Email send failed (check Gmail App Password):", emailError.message);
+      // In development, still return token so flow can continue
+      const isDev = process.env.NODE_ENV !== 'production';
+      if (isDev) {
+        return res.status(200).json({ success: true, message: "Dev mode: email send failed, token returned for testing", devToken: token });
+      }
+      return res.status(500).json({ message: "Failed to send verification email", error: emailError.message });
+    }
   } catch (error) {
     console.error("sendVerificationEmail error:", error);
     res.status(500).json({ message: "Failed to send email", error: error.message });

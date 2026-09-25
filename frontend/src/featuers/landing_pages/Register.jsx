@@ -46,7 +46,22 @@ export default function Register() {
     if (!emailtext.trim()) return toast.error("Please enter an email to verify");
     setVerifying(true);
     try {
-      await axiosInstance.post("/api/auth/send-verification", { email: emailtext.trim() });
+      const res = await axiosInstance.post("/api/auth/send-verification", { email: emailtext.trim() });
+      const data = res.data;
+
+      // Dev mode: backend couldn't send email but returned a token directly
+      if (data.devToken) {
+        try {
+          await axiosInstance.post("/api/auth/verify-email", { token: data.devToken });
+          setIsEmailVerified(true);
+          setVerificationSent(false);
+          toast.success("Email auto-verified (dev mode — email service not configured)");
+        } catch (verifyErr) {
+          toast.error("Auto-verification failed: " + (verifyErr?.response?.data?.message || "Unknown error"));
+        }
+        return;
+      }
+
       setVerificationSent(true);
       toast.success("Verification email sent! Please check your inbox.");
     } catch (err) {
@@ -55,6 +70,7 @@ export default function Register() {
       setVerifying(false);
     }
   };
+
 
   const getUsernameError = (username) => {
     if (!username) return "";

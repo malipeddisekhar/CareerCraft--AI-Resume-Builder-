@@ -11,9 +11,10 @@ const connectionString = process.env.POSTGRESQL_URI ?? "";
 
 const pgConfig = {
   connectionString,
-  max: 5,
+  max: 10,
   idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 15000,
+  connectionTimeoutMillis: 30000,
+  keepAlive: true,
 };
 
 const sslEnv = process.env.POSTGRESQL_SSL?.toLowerCase();
@@ -36,6 +37,11 @@ if (shouldUseSsl) {
 }
 
 export const pool = new Pool(pgConfig);
+
+// Handle idle pool client errors gracefully so ECONNRESET from Supabase doesn't terminate node process
+pool.on("error", (err) => {
+  console.warn("⚠️ PostgreSQL idle client warning:", err.message);
+});
 
 export const connectDB = async () => {
   try {
