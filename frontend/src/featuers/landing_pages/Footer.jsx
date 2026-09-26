@@ -3,8 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import CareerCraftLogo from "../../assets/careercraft_logo.png";
 import { ChevronDown } from "lucide-react";
 import axiosInstance from "../../api/axios";
-// Import React Icons
-import { SiYoutube, SiInstagram, SiLinkedin, SiFacebook } from "react-icons/si";
 import { FaArrowRight } from "react-icons/fa6";
 import { Loader2, Check, Mail, AlertCircle } from "lucide-react";
 
@@ -19,29 +17,6 @@ function Footer() {
   const toggleSection = (section) => {
     setOpenSection(openSection === section ? null : section);
   };
-  // Updated socialLinks with responsive icon sizes
-  const socialLinks = [
-    {
-      icon: <SiYoutube className="w-3 h-3 sm:w-4 sm:h-4 md:w-[18px] md:h-[18px]" />,
-      bgColor: "bg-[#ff0000]",
-      href: "https://www.youtube.com/channel/UCJzITNWKW5njk0AWkEZxSrw",
-    },
-    {
-      icon: <SiInstagram className="w-3 h-3 sm:w-4 sm:h-4 md:w-[18px] md:h-[18px]" />,
-      bgColor: "bg-gradient-to-tr from-[#f9ce34] via-[#ee2a7b] to-[#6228d7]",
-      href: "#",
-    },
-    {
-      icon: <SiLinkedin className="w-3 h-3 sm:w-4 sm:h-4 md:w-[18px] md:h-[18px]" />,
-      bgColor: "bg-[#0077b5]",
-      href: "#",
-    },
-    {
-      icon: <SiFacebook className="w-3 h-3 sm:w-4 sm:h-4 md:w-[18px] md:h-[18px]" />,
-      bgColor: "bg-[#1877f2]",
-      href: "#",
-    },
-  ];
 
   /* Newsletter Logic */
   const [email, setEmail] = useState("");
@@ -93,29 +68,14 @@ function Footer() {
               className="w-20 sm:w-24 md:w-28 lg:w-32 mb-3 sm:mb-4 transition-opacity cursor-pointer hover:opacity-80"
               onClick={() => navigate("/")}
             />
-            <p className="text-[10px] sm:text-[11px] md:text-[12px] lg:text-[13px] leading-relaxed text-gray-400 font-medium mb-3 sm:mb-4 md:mb-6 max-w-xs sm:max-w-sm mx-auto md:mx-0">
+            <p className="text-[10px] sm:text-[11px] md:text-[12px] lg:text-[13px] leading-relaxed text-gray-400 font-medium mb-4 sm:mb-5 max-w-xs sm:max-w-sm mx-auto md:mx-0">
               Empowering <span className="font-bold text-blue-500">skills</span>
               , connecting{" "}
               <span className="font-bold text-orange-500">talent</span>{" "}
               worldwide.
             </p>
 
-            {/* Social Icons with responsive sizing */}
-            <div className="flex gap-1.5 sm:gap-2 mb-4 sm:mb-6 md:mb-8">
-              {socialLinks.map((social, index) => (
-                <a
-                  key={index}
-                  href={social.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`${social.bgColor} w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 flex items-center justify-center rounded-lg sm:rounded-xl text-white shadow-sm hover:-translate-y-1 hover:shadow-lg transition-all duration-300`}
-                >
-                  {social.icon}
-                </a>
-              ))}
-            </div>
-
-            <div className="mt-1 sm:mt-2 w-full max-w-[240px] sm:max-w-[280px] mx-auto md:mx-0">
+            <div className="w-full max-w-[240px] sm:max-w-[280px] mx-auto md:mx-0">
               <h4 className="text-[9px] sm:text-[10px] md:text-[11px] font-black uppercase tracking-widest text-[#1a2e52] mb-2 sm:mb-3">
                 Stay Connected
               </h4>

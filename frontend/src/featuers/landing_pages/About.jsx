@@ -88,7 +88,7 @@ const AboutUs = () => {
           >
             <div className="space-y-5 md:space-y-6 text-center md:text-left">
               <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">About CareerCraft AI</h2>
-              <h6><b>Headquarter:</b> Palam, New Delhi, India.</h6>
+              <h6><b>Headquarter:</b> Rajam, Vizianagarm, India.</h6>
               <p className="text-slate-600 leading-relaxed border-l-4 border-blue-500 pl-4">
                 CareerCraft AI is a career technology platform
                 focused on bridging the gap between
