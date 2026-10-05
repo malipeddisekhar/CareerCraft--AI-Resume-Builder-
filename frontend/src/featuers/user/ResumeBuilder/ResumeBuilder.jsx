@@ -959,19 +959,18 @@ const ResumeBuilder = () => {
                           await handleGenerate100AtsResume();
                         }}
                         disabled={isOptimizingAts || isSavingResume}
-                        className="flex gap-2 items-center text-sm font-bold bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 hover:from-blue-700 hover:to-violet-700 text-white px-5 sm:px-6 py-2.5 rounded-xl shadow-lg shadow-indigo-500/25 transition-all select-none hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
+                        className="flex items-center justify-center gap-2 text-xs sm:text-sm font-bold bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 hover:from-blue-700 hover:to-violet-700 text-white px-4 sm:px-5 py-2.5 rounded-xl shadow-md shadow-indigo-500/20 transition-all select-none hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 whitespace-nowrap flex-shrink-0"
                       >
                         {isOptimizingAts ? (
                           <>
-                            <RefreshCw size={16} className="animate-spin" />
-                            <span className="hidden sm:inline">Generating 100% ATS Resume...</span>
+                            <RefreshCw size={15} className="animate-spin flex-shrink-0" />
+                            <span>Optimizing with AI...</span>
                           </>
                         ) : (
                           <>
-                            <Sparkles size={16} className="text-yellow-300 animate-pulse" />
-                            <span className="hidden sm:inline">Generate 100% ATS Resume with AI</span>
-                            <span className="sm:hidden">100% ATS AI</span>
-                            <ArrowRight size={16} />
+                            <Sparkles size={15} className="text-amber-300 flex-shrink-0 animate-pulse" />
+                            <span>Generate 100% ATS Resume</span>
+                            <ArrowRight size={15} className="flex-shrink-0" />
                           </>
                         )}
                       </button>
@@ -1051,18 +1050,18 @@ const ResumeBuilder = () => {
                       await handleGenerate100AtsResume();
                     }}
                     disabled={isOptimizingAts || isSavingResume}
-                    className="flex gap-2 items-center text-xs sm:text-sm font-bold bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 hover:from-blue-700 hover:to-violet-700 text-white px-4 py-2 rounded-xl shadow-md transition-all select-none disabled:opacity-50"
+                    className="flex items-center justify-center gap-2 text-xs sm:text-sm font-bold bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 hover:from-blue-700 hover:to-violet-700 text-white px-4 py-2.5 rounded-xl shadow-md transition-all select-none whitespace-nowrap disabled:opacity-50"
                   >
                     {isOptimizingAts ? (
                       <>
-                        <RefreshCw size={14} className="animate-spin" />
-                        <span>Optimizing...</span>
+                        <RefreshCw size={14} className="animate-spin flex-shrink-0" />
+                        <span>Optimizing with AI...</span>
                       </>
                     ) : (
                       <>
-                        <Sparkles size={14} className="text-yellow-300 animate-pulse" />
-                        <span>100% ATS Resume AI</span>
-                        <ArrowRight size={14} />
+                        <Sparkles size={14} className="text-amber-300 flex-shrink-0 animate-pulse" />
+                        <span>Generate 100% ATS Resume</span>
+                        <ArrowRight size={14} className="flex-shrink-0" />
                       </>
                     )}
                   </button>

@@ -94,13 +94,42 @@ const AtsCompletionModal = ({
             <div className="flex flex-col sm:flex-row items-center justify-between gap-5 relative z-10">
               
               {/* Score Ring / Dial */}
-              <div className="flex items-center gap-4">
-                <div className="relative w-24 h-24 rounded-full bg-gradient-to-br from-emerald-500 via-teal-400 to-emerald-600 p-1 flex items-center justify-center shadow-lg shadow-emerald-500/30 flex-shrink-0 animate-pulse">
-                  <div className="w-full h-full rounded-full bg-slate-950 flex flex-col items-center justify-center text-center">
-                    <span className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 to-teal-200">
+              <div className="flex items-center gap-5">
+                <div className="relative w-28 h-28 flex items-center justify-center flex-shrink-0">
+                  <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                    <circle
+                      cx="50"
+                      cy="50"
+                      r="42"
+                      stroke="#1e293b"
+                      strokeWidth="7"
+                      fill="transparent"
+                    />
+                    <circle
+                      cx="50"
+                      cy="50"
+                      r="42"
+                      stroke="url(#atsScoreGradient)"
+                      strokeWidth="7"
+                      strokeDasharray={263.89}
+                      strokeDashoffset={263.89 - (263.89 * (atsScore || 99)) / 100}
+                      strokeLinecap="round"
+                      fill="transparent"
+                      style={{ filter: "drop-shadow(0 0 8px rgba(16, 185, 129, 0.45))" }}
+                    />
+                    <defs>
+                      <linearGradient id="atsScoreGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor="#10b981" />
+                        <stop offset="50%" stopColor="#06b6d4" />
+                        <stop offset="100%" stopColor="#6366f1" />
+                      </linearGradient>
+                    </defs>
+                  </svg>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+                    <span className="text-3xl font-black text-white tracking-tight leading-none">
                       {atsScore}%
                     </span>
-                    <span className="text-[9px] font-semibold text-emerald-400 uppercase tracking-widest -mt-1">
+                    <span className="text-[9px] font-bold text-emerald-400 uppercase tracking-wider mt-1">
                       ATS Score
                     </span>
                   </div>
@@ -114,11 +143,11 @@ const AtsCompletionModal = ({
                   <p className="text-xs text-slate-300 mt-1 max-w-sm">
                     Surpasses the 80% benchmark required by top-tier ATS systems (Workday, Taleo, Greenhouse, Lever).
                   </p>
-                  <div className="flex flex-wrap gap-2 mt-2">
-                    <span className="inline-flex items-center gap-1 text-[11px] font-medium bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 px-2 py-0.5 rounded-md">
+                  <div className="flex flex-wrap gap-2 mt-2.5">
+                    <span className="inline-flex items-center gap-1 text-[11px] font-medium bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 px-2.5 py-0.5 rounded-md">
                       <TrendingUp size={12} /> {stats.shortlistRate} Shortlist Rate
                     </span>
-                    <span className="inline-flex items-center gap-1 text-[11px] font-medium bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 px-2 py-0.5 rounded-md">
+                    <span className="inline-flex items-center gap-1 text-[11px] font-medium bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 px-2.5 py-0.5 rounded-md">
                       <Zap size={12} /> {stats.actionVerbsCount}+ Action Verbs
                     </span>
                   </div>
@@ -127,21 +156,21 @@ const AtsCompletionModal = ({
 
               {/* 4 Score Pills */}
               <div className="grid grid-cols-2 gap-2.5 w-full sm:w-auto">
-                <div className="bg-white/5 border border-white/10 rounded-xl px-3.5 py-2 text-center min-w-[110px]">
+                <div className="bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-center min-w-[110px] backdrop-blur-sm shadow-inner">
                   <p className="text-[10px] uppercase font-semibold text-slate-400">Keywords</p>
-                  <p className="text-base font-bold text-emerald-400">{breakdown.keywords}%</p>
+                  <p className="text-lg font-black text-emerald-400">{breakdown.keywords}%</p>
                 </div>
-                <div className="bg-white/5 border border-white/10 rounded-xl px-3.5 py-2 text-center min-w-[110px]">
+                <div className="bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-center min-w-[110px] backdrop-blur-sm shadow-inner">
                   <p className="text-[10px] uppercase font-semibold text-slate-400">Formatting</p>
-                  <p className="text-base font-bold text-emerald-400">{breakdown.formatting}%</p>
+                  <p className="text-lg font-black text-emerald-400">{breakdown.formatting}%</p>
                 </div>
-                <div className="bg-white/5 border border-white/10 rounded-xl px-3.5 py-2 text-center min-w-[110px]">
+                <div className="bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-center min-w-[110px] backdrop-blur-sm shadow-inner">
                   <p className="text-[10px] uppercase font-semibold text-slate-400">STAR Metrics</p>
-                  <p className="text-base font-bold text-emerald-400">{breakdown.impactMetrics}%</p>
+                  <p className="text-lg font-black text-emerald-400">{breakdown.impactMetrics}%</p>
                 </div>
-                <div className="bg-white/5 border border-white/10 rounded-xl px-3.5 py-2 text-center min-w-[110px]">
+                <div className="bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-center min-w-[110px] backdrop-blur-sm shadow-inner">
                   <p className="text-[10px] uppercase font-semibold text-slate-400">Structure</p>
-                  <p className="text-base font-bold text-emerald-400">{breakdown.completeness}%</p>
+                  <p className="text-lg font-black text-emerald-400">{breakdown.completeness}%</p>
                 </div>
               </div>
 
@@ -242,6 +271,28 @@ const AtsCompletionModal = ({
                   )}
                 </div>
               </div>
+
+              {/* Experience Highlights Comparison */}
+              {(currentPreviewData.experience || []).length > 0 && (
+                <div className="pt-2 border-t border-slate-100">
+                  <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">
+                    {activeTab === "ats" ? "⭐ STAR / XYZ Experience Achievements:" : "Work History:"}
+                  </p>
+                  <div className="space-y-2">
+                    {(currentPreviewData.experience || []).slice(0, 2).map((exp, i) => (
+                      <div key={i} className="text-xs bg-slate-50/80 p-2.5 rounded-xl border border-slate-100">
+                        <div className="flex items-center justify-between">
+                          <span className="font-bold text-slate-800">{exp.title || "Role"}</span>
+                          {exp.company && <span className="text-slate-500 text-[11px]">{exp.company}</span>}
+                        </div>
+                        <p className="text-slate-600 mt-1 leading-relaxed text-[11px] line-clamp-3">
+                          {exp.description}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Apply to editor button */}
               {activeTab === "ats" && (

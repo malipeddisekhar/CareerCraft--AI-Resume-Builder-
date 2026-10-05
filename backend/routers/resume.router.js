@@ -191,9 +191,14 @@ resumeRouter.post("/generate-pdf", async (req, res) => {
 
     const page = await browser.newPage();
 
-    await page.setContent(html, {
-      waitUntil: "networkidle0",
-    });
+    try {
+      await page.setContent(html, {
+        waitUntil: "domcontentloaded",
+        timeout: 20000,
+      });
+    } catch (e) {
+      console.warn("page.setContent warning:", e.message);
+    }
 
     const pdfBuffer = await page.pdf({
       format: "A4",
