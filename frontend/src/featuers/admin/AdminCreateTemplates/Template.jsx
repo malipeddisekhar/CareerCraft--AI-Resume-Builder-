@@ -1,7 +1,7 @@
 import React from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { createPortal } from "react-dom";
-import { Filter, Plus, X, Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { Filter, Plus, X, Search, ChevronLeft, ChevronRight, Trash2 } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 import { TEMPLATES } from "../../user/Templates/TemplateRegistry";
 import { templates as CV_LIST } from "../../user/CV/Templatesgallery";
@@ -11,6 +11,7 @@ import axiosInstance from "../../../api/axios";
 import TemplateTypeSwitch from "./TemplateTypeSwitch";
 import { COVER_LETTER_TEMPLATES } from "../../user/CoverLetter/CoverLetterRegistry";
 import CoverLetterTemplatesMap from "../../user/CoverLetter/CoverLetterTemplatesMap";
+import CreateTemplateModal from "./CreateTemplateModal";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -23,42 +24,117 @@ const SOURCE_MAP = {
   "cover-letter": COVER_LETTER_TEMPLATES,
 };
 
-const CATEGORY_BUCKETS = {
-  "Contemporary Templates": ["modern", "Modern", "Modern Templates", "Contemporary"],
-  "Creative Templates": ["creative", "Creative", "Creative Templates"],
-  "Traditional Templates": [
-    "professional", "Professional", "Professional Templates",
-    "Traditional", "Academic", "Elegant", "Minimal",
-  ],
-};
+// ONLY the 3 existing categories — do NOT create any separate category!
+const EXISTING_CATEGORIES = [
+  "Contemporary Templates",
+  "Creative Templates",
+  "Traditional Templates",
+];
 
-const TYPE_LABELS = {
-  resume: "Resume Template",
-  cv: "CV Template",
-  "cover-letter": "Cover Letter Template",
+function getCategoryBucketKey(category) {
+  const cat = String(category || "").trim().toLowerCase();
+  if (cat.includes("contemporary") || cat.includes("modern")) {
+    return "Contemporary Templates";
+  }
+  if (cat.includes("creative") || cat.includes("design") || cat.includes("art")) {
+    return "Creative Templates";
+  }
+  if (
+    cat.includes("traditional") ||
+    cat.includes("professional") ||
+    cat.includes("academic") ||
+    cat.includes("minimal") ||
+    cat.includes("elegant")
+  ) {
+    return "Traditional Templates";
+  }
+  // Fallback ALWAYS goes to an existing category, NEVER creates a new category
+  return "Contemporary Templates";
+}
+
+const resolveImageUrl = (target) => {
+  if (!target) return CV_PLACEHOLDER;
+  // If passed the template object:
+  if (typeof target === "object") {
+    if (target.isStatic) return target.image || CV_PLACEHOLDER;
+    return resolveImageUrl(target.image);
+  }
+  // If target is already a full URL or blob or data URI
+  const url = String(target);
+  if (
+    url.startsWith("http://") ||
+    url.startsWith("https://") ||
+    url.startsWith("blob:") ||
+    url.startsWith("data:")
+  ) {
+    return url;
+  }
+  // If it's a Vite local asset path
+  if (
+    url.startsWith("/src/") ||
+    url.startsWith("/assets/") ||
+    url.includes("template_thumnail") ||
+    url.startsWith("@")
+  ) {
+    return url;
+  }
+  // If it's an uploaded file path from backend
+  const baseUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+  const cleanPath = url.replace(/\\/g, "/");
+  return `${baseUrl}${cleanPath.startsWith("/") ? "" : "/"}${cleanPath}`;
 };
 
 // ─── Pure Helpers ─────────────────────────────────────────────────────────────
 
-function buildApprovedTemplates(type) {
+function buildMergedTemplates(type, dbTemplates = []) {
+  // Always initialize strictly the 3 existing categories
+  const sections = {
+    "Contemporary Templates": [],
+    "Creative Templates": [],
+    "Traditional Templates": [],
+  };
+
+  // 1. Static templates
   const source = SOURCE_MAP[type] ?? [];
-  const toAdminFmt = (list) =>
-    list.map((t) => ({
+  for (const t of source) {
+    const bucket = getCategoryBucketKey(t.category);
+    sections[bucket].push({
       _id: t.id,
       name: t.name,
       used: 0,
       previewText: t.description || t.category,
       image: t.thumbnail || CV_PLACEHOLDER,
       isStatic: !!t.thumbnail,
+      isDbTemplate: false,
       templateId: t.id,
-    }));
+      type,
+    });
+  }
 
-  return Object.fromEntries(
-    Object.entries(CATEGORY_BUCKETS).map(([label, cats]) => [
-      label,
-      toAdminFmt(source.filter((t) => cats.includes(t.category))),
-    ])
-  );
+  // 2. DB uploaded templates matching current type (or default resume)
+  const matchingDb = dbTemplates.filter((t) => {
+    const tType = (t.type || "resume").toLowerCase();
+    return tType === type.toLowerCase();
+  });
+
+  // Prepend into the existing category so newly created templates appear first
+  for (const t of matchingDb) {
+    const bucket = getCategoryBucketKey(t.category);
+    sections[bucket].unshift({
+      _id: t._id || t.id,
+      name: t.name,
+      used: 0,
+      previewText: t.description || t.category || "Uploaded Template",
+      image: t.imageUrl || t.previewimage || CV_PLACEHOLDER,
+      isStatic: false,
+      isDbTemplate: true,
+      templateId: t._id || t.id,
+      type: t.type || "resume",
+      category: t.category,
+    });
+  }
+
+  return sections;
 }
 
 function applyFilters(templates, statuses, search, statusFilter) {
@@ -129,13 +205,13 @@ function usePreviewModal(type) {
   const viewportRef = React.useRef(null);
   const isOpen = template !== null;
 
-  // Body scroll lock
   React.useEffect(() => {
     document.body.style.overflow = isOpen ? "hidden" : "unset";
-    return () => { document.body.style.overflow = "unset"; };
+    return () => {
+      document.body.style.overflow = "unset";
+    };
   }, [isOpen]);
 
-  // Viewport measurement for CV zoom scale
   React.useEffect(() => {
     if (!isOpen || type !== "cv") return;
     const el = viewportRef.current;
@@ -153,7 +229,14 @@ function usePreviewModal(type) {
     return available ? Math.min(1, available / CV_CANVAS_WIDTH) : 1;
   }, [type, viewportWidth]);
 
-  return { isOpen, template, viewportRef, scale, open: setTemplate, close: () => setTemplate(null) };
+  return {
+    isOpen,
+    template,
+    viewportRef,
+    scale,
+    open: setTemplate,
+    close: () => setTemplate(null),
+  };
 }
 
 function useScrollSection(items) {
@@ -169,13 +252,19 @@ function useScrollSection(items) {
     };
     const t = setTimeout(check, 50);
     window.addEventListener("resize", check);
-    return () => { clearTimeout(t); window.removeEventListener("resize", check); };
+    return () => {
+      clearTimeout(t);
+      window.removeEventListener("resize", check);
+    };
   }, [items]);
 
   const scroll = (dir) => {
     if (!scrollRef.current) return;
     scrollRef.current.scrollBy({
-      left: dir === "left" ? -scrollRef.current.clientWidth : scrollRef.current.clientWidth,
+      left:
+        dir === "left"
+          ? -scrollRef.current.clientWidth
+          : scrollRef.current.clientWidth,
       behavior: "smooth",
     });
   };
@@ -186,13 +275,15 @@ function useScrollSection(items) {
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
 const TemplateThumb = React.memo(function TemplateThumb({ tpl, type }) {
-  if (type === "resume") {
+  if (type === "resume" || tpl.isDbTemplate) {
     return (
       <img
-        src={tpl.image}
+        src={resolveImageUrl(tpl)}
         alt={tpl.name}
         className="w-full h-full object-contain"
-        onError={(e) => { e.target.src = CV_PLACEHOLDER; }}
+        onError={(e) => {
+          e.target.src = CV_PLACEHOLDER;
+        }}
       />
     );
   }
@@ -204,7 +295,12 @@ const TemplateThumb = React.memo(function TemplateThumb({ tpl, type }) {
   return (
     <div
       className="absolute inset-0 pointer-events-none bg-white origin-top-left"
-      style={{ transform: "scale(0.32)", width: 794, height: 1123, overflow: "hidden" }}
+      style={{
+        transform: "scale(0.32)",
+        width: 794,
+        height: 1123,
+        overflow: "hidden",
+      }}
     >
       {Component && <Component formData={mergeWithSampleData({})} />}
     </div>
@@ -212,7 +308,12 @@ const TemplateThumb = React.memo(function TemplateThumb({ tpl, type }) {
 });
 
 const AdminTemplateCard = React.memo(function AdminTemplateCard({
-  tpl, type, isActive, onPreview, onToggleStatus,
+  tpl,
+  type,
+  isActive,
+  onPreview,
+  onToggleStatus,
+  onDelete,
 }) {
   return (
     <div
@@ -225,9 +326,16 @@ const AdminTemplateCard = React.memo(function AdminTemplateCard({
         onClick={onPreview}
       >
         <TemplateThumb tpl={tpl} type={type} />
+        {tpl.isDbTemplate && (
+          <span className="absolute top-2 left-2 px-2 py-0.5 text-[10px] font-semibold bg-blue-600 text-white rounded-full shadow">
+            Uploaded
+          </span>
+        )}
       </div>
 
-      <div className="mt-2 text-sm font-semibold text-slate-800 truncate">{tpl.name}</div>
+      <div className="mt-2 text-sm font-semibold text-slate-800 truncate">
+        {tpl.name}
+      </div>
       <div className="text-xs text-slate-500 truncate">{tpl.previewText}</div>
 
       <div className="flex gap-2 mt-3 pt-2 border-t">
@@ -247,13 +355,28 @@ const AdminTemplateCard = React.memo(function AdminTemplateCard({
         >
           {isActive ? "Disable" : "Enable"}
         </button>
+        {tpl.isDbTemplate && onDelete && (
+          <button
+            onClick={() => onDelete(tpl._id)}
+            className="p-1.5 text-xs rounded bg-slate-50 text-red-500 hover:bg-red-50 hover:text-red-600 transition-colors"
+            title="Delete uploaded template"
+          >
+            <Trash2 size={14} />
+          </button>
+        )}
       </div>
     </div>
   );
 });
 
 const AdminTemplateSection = React.memo(function AdminTemplateSection({
-  title, items, type, isTemplateActive, handlePreview, handleToggleStatus,
+  title,
+  items,
+  type,
+  isTemplateActive,
+  handlePreview,
+  handleToggleStatus,
+  handleDelete,
 }) {
   const { scrollRef, showControls, scroll } = useScrollSection(items);
 
@@ -291,6 +414,7 @@ const AdminTemplateSection = React.memo(function AdminTemplateSection({
               isActive={isTemplateActive(tpl._id)}
               onPreview={() => handlePreview(tpl)}
               onToggleStatus={() => handleToggleStatus(tpl._id)}
+              onDelete={handleDelete}
             />
           ))}
         </div>
@@ -308,13 +432,21 @@ const AdminTemplateSection = React.memo(function AdminTemplateSection({
   );
 });
 
-function PreviewModal({ isOpen, template, type, viewportRef, scale, onClose }) {
+function PreviewModal({
+  isOpen,
+  template,
+  type,
+  viewportRef,
+  scale,
+  onClose,
+}) {
   if (!isOpen) return null;
 
+  const isDbOrResume = type === "resume" || template?.isDbTemplate;
   const PreviewComponent =
-    type === "cv" && template?.templateId
+    !isDbOrResume && type === "cv" && template?.templateId
       ? CVTemplates?.[template.templateId]
-      : type === "cover-letter" && template?.templateId
+      : !isDbOrResume && type === "cover-letter" && template?.templateId
       ? CoverLetterTemplatesMap?.[template.templateId]
       : null;
 
@@ -346,10 +478,10 @@ function PreviewModal({ isOpen, template, type, viewportRef, scale, onClose }) {
         </button>
 
         <div className="flex-1 overflow-auto bg-slate-100 p-4 sm:p-6">
-          {type === "resume" ? (
+          {isDbOrResume ? (
             <div className="mx-auto flex w-full max-w-4xl justify-center">
               <img
-                src={template?.image || template}
+                src={resolveImageUrl(template)}
                 alt={template?.name || "Template Preview"}
                 className="h-auto max-w-full rounded-md bg-white shadow-lg"
               />
@@ -381,19 +513,93 @@ export default function AdminTemplates() {
   const [type, setType] = React.useState("resume");
   const [search, setSearch] = React.useState("");
   const [statusFilter, setStatusFilter] = React.useState("all");
+  const [createModalOpen, setCreateModalOpen] = React.useState(false);
 
+  const queryClient = useQueryClient();
   const { statuses, isActive, toggleStatus } = useTemplateVisibility();
   const preview = usePreviewModal(type);
 
-  const approvedTemplates = React.useMemo(() => buildApprovedTemplates(type), [type]);
+  // Fetch DB templates from backend
+  const { data: dbTemplates = [] } = useQuery({
+    queryKey: ["adminTemplates"],
+    queryFn: async () => {
+      try {
+        const res = await axiosInstance.get("/api/admin/templates");
+        return Array.isArray(res.data) ? res.data : [];
+      } catch (err) {
+        console.error("Failed to load admin templates:", err);
+        return [];
+      }
+    },
+  });
+
+  // Delete mutation for uploaded templates with immediate UI update
+  const deleteMutation = useMutation({
+    mutationFn: (id) => axiosInstance.delete(`/api/admin/templates/${id}`),
+    onMutate: async (deletedId) => {
+      // Cancel outgoing refetches so they don't overwrite optimistic update
+      await queryClient.cancelQueries({ queryKey: ["adminTemplates"] });
+
+      // Snapshot previous value
+      const previousTemplates = queryClient.getQueryData(["adminTemplates"]);
+
+      // Optimistically remove from UI immediately without waiting for server response
+      queryClient.setQueryData(["adminTemplates"], (old = []) =>
+        Array.isArray(old)
+          ? old.filter((t) => (t._id || t.id) !== deletedId)
+          : []
+      );
+
+      return { previousTemplates };
+    },
+    onSuccess: (_data, deletedId) => {
+      // Ensure the deleted item remains filtered out of cache
+      queryClient.setQueryData(["adminTemplates"], (old = []) =>
+        Array.isArray(old)
+          ? old.filter((t) => (t._id || t.id) !== deletedId)
+          : []
+      );
+      queryClient.invalidateQueries({ queryKey: ["adminTemplates"] });
+      queryClient.invalidateQueries({ queryKey: ["templates"] });
+      toast.success("Template was deleted successfully.");
+    },
+    onError: (err, _deletedId, context) => {
+      // Rollback to previous state on failure
+      if (context?.previousTemplates) {
+        queryClient.setQueryData(["adminTemplates"], context.previousTemplates);
+      }
+      toast.error(
+        err?.response?.data?.msg ||
+          err?.response?.data?.message ||
+          "Failed to delete template"
+      );
+    },
+  });
+
+  const handleDeleteTemplate = (id) => {
+    if (window.confirm("Are you sure you want to delete this template?")) {
+      deleteMutation.mutate(id);
+    }
+  };
+
+  // Merge static templates + DB uploaded templates into STRICTLY existing categories
+  const approvedTemplates = React.useMemo(
+    () => buildMergedTemplates(type, dbTemplates),
+    [type, dbTemplates]
+  );
 
   const filteredTemplates = React.useMemo(
     () => applyFilters(approvedTemplates, statuses, search, statusFilter),
     [approvedTemplates, statuses, search, statusFilter]
   );
 
-  const handleCreateClick = () =>
-    alert(`Create New ${TYPE_LABELS[type] ?? "Template"} feature coming soon!`);
+  const handleCreateClick = () => setCreateModalOpen(true);
+
+  const handleTemplateCreated = (newTemplate) => {
+    queryClient.invalidateQueries({ queryKey: ["adminTemplates"] });
+    queryClient.invalidateQueries({ queryKey: ["templates"] });
+    toast.success(`"${newTemplate?.name || "Template"}" added to categories! 🎉`);
+  };
 
   return (
     <div className="bg-slate-50 min-h-screen">
@@ -443,16 +649,17 @@ export default function AdminTemplates() {
             </div>
 
             <button
+              id="btn-create-new-template"
               onClick={handleCreateClick}
-              className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg text-sm"
+              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm"
             >
               <Plus size={16} />
-              Create New {type === "resume" ? "Template" : "CV"}
+              Create New Template
             </button>
           </div>
         </div>
 
-        {/* Template Sections */}
+        {/* Template Sections — ONLY the 3 existing categories */}
         {Object.entries(filteredTemplates).map(([section, items]) =>
           items.length > 0 ? (
             <AdminTemplateSection
@@ -463,6 +670,7 @@ export default function AdminTemplates() {
               isTemplateActive={isActive}
               handlePreview={preview.open}
               handleToggleStatus={toggleStatus}
+              handleDelete={handleDeleteTemplate}
             />
           ) : null
         )}
@@ -475,6 +683,13 @@ export default function AdminTemplates() {
           viewportRef={preview.viewportRef}
           scale={preview.scale}
           onClose={preview.close}
+        />
+
+        {/* Create Template Modal */}
+        <CreateTemplateModal
+          isOpen={createModalOpen}
+          onClose={() => setCreateModalOpen(false)}
+          onSuccess={handleTemplateCreated}
         />
       </div>
     </div>

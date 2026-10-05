@@ -90,31 +90,130 @@ export const uploadTemplate = async (req, res) => {
   }
 };
 
+/* ================= ADMIN UPLOAD TEMPLATE (Auto-Approved) ================= */
+export const adminUploadTemplate = async (req, res) => {
+  try {
+    const { name, category, description, type } = req.body;
+
+    if (!req.files?.thumbnail) {
+      return res.status(400).json({ msg: "Thumbnail image is required" });
+    }
+
+    if (!name || !name.trim()) {
+      return res.status(400).json({ msg: "Template name is required" });
+    }
+
+    const thumbnailPath = req.files.thumbnail[0].path;
+    // templateFile is optional — admin may only upload a preview image
+    const templatePath = req.files?.templateFile?.[0]?.path ?? thumbnailPath;
+    const templateId = crypto.randomUUID();
+    const finalCategory = category || "Modern";
+    const finalDescription = description || "";
+    const finalType = type || "resume";
+
+    // Ensure columns exist gracefully
+    try {
+      await pool.query("ALTER TABLE templates ADD COLUMN IF NOT EXISTS type VARCHAR(50) DEFAULT 'resume'");
+    } catch (_) {}
+
+    try {
+      await pool.query(
+        `INSERT INTO templates (id, name, category, description, type, file_path, previewimage, status, created_at, updated_at) 
+         VALUES ($1, $2, $3, $4, $5, $6, $7, 'approved', NOW(), NOW())`,
+        [templateId, name.trim(), finalCategory, finalDescription, finalType, templatePath, thumbnailPath]
+      );
+    } catch (_) {
+      try {
+        await pool.query(
+          `INSERT INTO templates (id, name, category, description, file_path, previewimage, status, created_at, updated_at) 
+           VALUES ($1, $2, $3, $4, $5, $6, 'approved', NOW(), NOW())`,
+          [templateId, name.trim(), finalCategory, finalDescription, templatePath, thumbnailPath]
+        );
+      } catch (__) {
+        await pool.query(
+          `INSERT INTO templates (id, name, category, file_path, previewimage, status, created_at, updated_at) 
+           VALUES ($1, $2, $3, $4, $5, 'approved', NOW(), NOW())`,
+          [templateId, name.trim(), finalCategory, templatePath, thumbnailPath]
+        );
+      }
+    }
+
+    // 🔔 Admin notification about the new template (non-fatal)
+    try {
+      await pool.query(
+        `INSERT INTO notifications (id, type, message, user_id, actor, is_read, created_at, updated_at) 
+         VALUES ($1, $2, $3, $4, $5, false, NOW(), NOW())`,
+        [
+          crypto.randomUUID(),
+          "TEMPLATE_CREATED",
+          `Admin created new template: "${name.trim()}" (${finalCategory}) — auto-approved`,
+          req.userId,
+          "admin",
+        ]
+      );
+    } catch (_notifErr) {
+      // Notification failure should NOT prevent the upload from succeeding
+      console.warn("⚠️ Notification insert failed (non-fatal):", _notifErr.message);
+    }
+
+    const backendUrl = process.env.BACKEND_URL || "http://localhost:5000";
+    res.status(201).json({
+      msg: "Template created & approved successfully",
+      template: {
+        _id: templateId,
+        name: name.trim(),
+        category: finalCategory,
+        description: finalDescription,
+        type: finalType,
+        status: "approved",
+        imageUrl: `${backendUrl}/uploads/templates/${path.basename(thumbnailPath)}`,
+        fileUrl: `${backendUrl}/uploads/templates/${path.basename(templatePath)}`,
+        createdAt: new Date().toISOString(),
+      },
+    });
+  } catch (error) {
+    console.error("Error in adminUploadTemplate:", error);
+    res.status(500).json({ msg: "Server Error", error: error.message });
+  }
+};
+
 /* ================= GET TEMPLATES ================= */
 export const getTemplates = async (req, res) => {
   try {
     const { status } = req.query;
-    
-    let queryArgs = [];
-    let queryStr = "SELECT id as \"_id\", name, description, previewimage, file_path, status, category, created_at as \"createdAt\", updated_at as \"updatedAt\" FROM templates";
-    
-    if (status) {
-      queryStr += " WHERE status = $1";
-      queryArgs.push(status);
+    let result;
+
+    try {
+      let queryStr = `SELECT id as "_id", name, description, previewimage, file_path, status, category, type, created_at as "createdAt", updated_at as "updatedAt" FROM templates`;
+      if (status) {
+        queryStr += " WHERE status = $1";
+        result = await pool.query(queryStr + " ORDER BY created_at DESC", [status]);
+      } else {
+        result = await pool.query(queryStr + " ORDER BY created_at DESC");
+      }
+    } catch (_colErr) {
+      // Fallback if type column is not present
+      let queryStr = `SELECT id as "_id", name, description, previewimage, file_path, status, category, created_at as "createdAt", updated_at as "updatedAt" FROM templates`;
+      if (status) {
+        queryStr += " WHERE status = $1";
+        result = await pool.query(queryStr + " ORDER BY created_at DESC", [status]);
+      } else {
+        result = await pool.query(queryStr + " ORDER BY created_at DESC");
+      }
     }
-    queryStr += " ORDER BY created_at DESC";
 
-    const result = await pool.query(queryStr, queryArgs);
+    const backendUrl = process.env.BACKEND_URL || "http://localhost:5000";
 
-    const templatesWithUrls = result.rows.map((t) => ({
-      ...t,
-      fileUrl: `${process.env.BACKEND_URL || "http://localhost:5000"}/uploads/templates/${path.basename(
-        t.file_path
-      )}`,
-      imageUrl: `${process.env.BACKEND_URL || "http://localhost:5000"}/uploads/templates/${path.basename(
-        t.previewimage
-      )}`,
-    }));
+    const templatesWithUrls = result.rows.map((t) => {
+      const thumbFile = t.previewimage ? path.basename(t.previewimage) : null;
+      const docFile   = t.file_path    ? path.basename(t.file_path)    : null;
+      return {
+        ...t,
+        type: t.type || "resume",
+        fileUrl:  docFile  ? `${backendUrl}/uploads/templates/${docFile}`  : null,
+        imageUrl: thumbFile ? `${backendUrl}/uploads/templates/${thumbFile}` : null,
+      };
+    });
 
     res.status(200).json(templatesWithUrls);
   } catch (error) {
@@ -243,12 +342,16 @@ export const deleteTemplate = async (req, res) => {
 
     await pool.query("DELETE FROM templates WHERE id = $1", [req.params.id]);
 
-    // 🔔 ADMIN NOTIFICATION
-    await pool.query(
-      `INSERT INTO notifications (id, type, message, user_id, actor, is_read, created_at, updated_at) 
-       VALUES ($1, $2, $3, $4, $5, false, NOW(), NOW())`,
-      [crypto.randomUUID(), "TEMPLATE_DELETED", "Template deleted", req.userId, "user"]
-    );
+    // 🔔 ADMIN NOTIFICATION (non-fatal)
+    try {
+      await pool.query(
+        `INSERT INTO notifications (id, type, message, user_id, actor, is_read, created_at, updated_at) 
+         VALUES ($1, $2, $3, $4, $5, false, NOW(), NOW())`,
+        [crypto.randomUUID(), "TEMPLATE_DELETED", "Template deleted", req.userId, "user"]
+      );
+    } catch (_nErr) {
+      console.warn("⚠️ Notification insert failed (non-fatal):", _nErr.message);
+    }
 
     res.status(200).json({ msg: "Template deleted successfully" });
   } catch (error) {

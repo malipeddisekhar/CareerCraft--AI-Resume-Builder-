@@ -43,7 +43,6 @@ app.use(apiTracker);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-app.use(express.json());
 app.use(cookieParser());
 
 // ✅ UPDATED: Larger JSON limit for HTML content
@@ -80,8 +79,16 @@ app.use("/api/newsletter", newsletterRouter);
 app.use("/api/admin", adminRouter);
 app.use("/api", analyticsRouter);
 
-// Serve uploads directory (for images/resumes)
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+// Serve uploads directory (for images/resumes) with CORS allowed
+app.use(
+  "/uploads",
+  (req, res, next) => {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
+    next();
+  },
+  express.static(path.join(__dirname, "uploads"))
+);
 
 app.use("/api/downloads", downloadsRouter);
 
