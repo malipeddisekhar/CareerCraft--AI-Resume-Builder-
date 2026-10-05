@@ -658,7 +658,7 @@ const CoverLetterPreview = ({
         first = false;
       }
 
-      const clean = (str) => str?.replace(/[^a-z0-9_\- ]/gi, "").trim().replace(/\s+/g, "_");
+      const clean = (str) => str?.replace(/[^a-z0-9_ -]/gi, "").trim().replace(/\s+/g, "_");
       const name = clean(fullName) || "CoverLetter";
       pdf.save(`${name}_Cover_Letter.pdf`);
     } catch (err) {

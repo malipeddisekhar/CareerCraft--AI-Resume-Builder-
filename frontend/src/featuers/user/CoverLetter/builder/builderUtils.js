@@ -144,7 +144,7 @@ export const saveDownloadRecord = async (html, documentTitle, fullName, selected
 
 export const saveRecentActivity = async (html, documentTitle, fullName, selectedTemplate, action = "visited") => {
   try {
-    const sanitize = (s) => (s || "").replace(/[^a-z0-9_\- ]/gi, "").trim().replace(/\s+/g, "_");
+    const sanitize = (s) => (s || "").replace(/[^a-z0-9_ -]/gi, "").trim().replace(/\s+/g, "_");
     const nameToUse = sanitize(documentTitle) || sanitize(fullName) || "Document";
 
     await axiosInstance.post("/api/downloads", {

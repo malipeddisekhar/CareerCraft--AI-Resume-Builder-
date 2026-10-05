@@ -12,8 +12,10 @@ import {
   getUserName,
   requestAdminAccess,
   approveAdminRequest,
-  rejectAdminRequest
+  rejectAdminRequest,
+  enhanceProfileBio
 } from "../controllers/user.controller.js";
+
 
 const userRouter = express.Router();
 
@@ -25,6 +27,8 @@ userRouter.put("/profile", isAuth, updateProfile);
 userRouter.put("/password", isAuth, changePassword);
 userRouter.get("/profile/:id", isAuth, getUserName);
 userRouter.post("/request-admin", isAuth, requestAdminAccess);
+userRouter.post("/enhance-bio", isAuth, enhanceProfileBio);
+
 
 
 // ---- Admin User Routes (DYNAMIC LAST — Admin only) ----

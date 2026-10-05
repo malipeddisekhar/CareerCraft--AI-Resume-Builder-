@@ -162,7 +162,7 @@ const CVPreview = ({ formData, selectedTemplate, isMaximized, onToggleMaximize }
         const imgData = pageCanvas.toDataURL("image/jpeg", 0.96);
         if (!first) pdf.addPage(); pdf.addImage(imgData, "JPEG", 0, 0, mmPageW, mmPageH); yPx += sliceH; first = false;
       }
-      const clean = (str) => str?.replace(/[^a-z0-9_\- ]/gi, "").trim().replace(/\s+/g, "_");
+      const clean = (str) => str?.replace(/[^a-z0-9_ -]/gi, "").trim().replace(/\s+/g, "_");
       const name = clean(displayData?.fullName) || "Resume", template = clean(selectedTemplate) || "Template";
       pdf.save(`${name}_${template}.pdf`);
     } catch (err) { console.error("PDF download error:", err); }

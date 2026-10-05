@@ -11,6 +11,8 @@ import {
   User,
   Zap,
   Search,
+  Sparkles,
+  RefreshCw,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../../api/axios";
@@ -35,6 +37,9 @@ import UserNavbar from "../UserNavBar/UserNavBar";
 import CVBuilderTopBar from "../CV/Cvbuildernavbar";
 import CompletionPopup from "./components/CompletionPopup";
 import MobilePreview from "./components/MobilePreview";
+import AtsCompletionModal from "./components/AtsCompletionModal";
+import ResumeBuilderTemplates from "./ResumeBuilderTemplates";
+import { getTemplateCSS } from "../Templates/TemplateRegistry";
 
 /* ─────────────────────────────────────────────────────────
    FLOATING FORM PANEL (mirrors CVBuilder behavior)
@@ -202,6 +207,10 @@ const ResumeBuilder = () => {
   const [warningFields, setWarningFields] = useState([]);
   const [highlightEmpty, setHighlightEmpty] = useState(false);
   const [showCompletionPopup, setShowCompletionPopup] = useState(false);
+  const [showAtsModal, setShowAtsModal] = useState(false);
+  const [isOptimizingAts, setIsOptimizingAts] = useState(false);
+  const [atsOptimizationResult, setAtsOptimizationResult] = useState(null);
+  const [downloadingFormat, setDownloadingFormat] = useState("");
   const isSectionValid = () => {
     switch (activeSection) {
       case "personal": {
@@ -233,8 +242,12 @@ const ResumeBuilder = () => {
       case "education":
         return formData?.education && formData.education.length > 0;
 
-      case "skills":
-        return formData?.skills && formData.skills.length > 0;
+      case "skills": {
+        const techLen = Array.isArray(formData?.skills?.technical) ? formData.skills.technical.length : 0;
+        const softLen = Array.isArray(formData?.skills?.soft) ? formData.skills.soft.length : 0;
+        const arrLen = Array.isArray(formData?.skills) ? formData.skills.length : 0;
+        return (techLen + softLen + arrLen) > 0;
+      }
 
       case "projects":
         // If no project entries, allow skipping
@@ -300,11 +313,15 @@ const ResumeBuilder = () => {
           empty.push("At least one education entry");
         }
         break;
-      case "skills":
-        if (!formData?.skills || formData.skills.length === 0) {
+      case "skills": {
+        const techLen = Array.isArray(formData?.skills?.technical) ? formData.skills.technical.length : 0;
+        const softLen = Array.isArray(formData?.skills?.soft) ? formData.skills.soft.length : 0;
+        const arrLen = Array.isArray(formData?.skills) ? formData.skills.length : 0;
+        if ((techLen + softLen + arrLen) === 0) {
           empty.push("At least one skill");
         }
         break;
+      }
       case "projects":
         if (formData?.projects?.length > 0) {
           formData.projects.forEach((proj, i) => {
@@ -375,11 +392,128 @@ const ResumeBuilder = () => {
     }
   };
 
-  const handleFinish = async () => {
-    const saved = await saveResumeToDatabase();
-    if (saved) {
-      setShowCompletionPopup(true);
+  const handleGenerate100AtsResume = async () => {
+    try {
+      setIsOptimizingAts(true);
+      await saveResumeToDatabase();
+
+      const response = await axiosInstance.post("/api/resume/optimize-ats", formData);
+      if (response.data?.success) {
+        setAtsOptimizationResult(response.data);
+        setShowAtsModal(true);
+      } else {
+        alert("Failed to optimize resume for ATS. Please try again.");
+      }
+    } catch (err) {
+      console.error("ATS Optimization failed:", err);
+      alert("Failed to generate 100% ATS Resume: " + (err.response?.data?.error || err.message));
+    } finally {
+      setIsOptimizingAts(false);
     }
+  };
+
+  const handleApplyAtsToEditor = (optimizedData) => {
+    setFormData(optimizedData);
+    localStorage.setItem("resumeFormData", JSON.stringify(optimizedData));
+    saveResumeToDatabase();
+  };
+
+  const handleExportFromModal = async (dataToExport, format = "PDF", baseFileName = "Resume") => {
+    const downloadKey = (baseFileName.includes("ATS") ? "ai-" : "orig-") + format.toLowerCase();
+    try {
+      setDownloadingFormat(downloadKey);
+
+      const container = document.createElement("div");
+      container.style.position = "fixed";
+      container.style.top = "-99999px";
+      container.style.left = "-99999px";
+      container.style.width = "794px";
+      container.style.background = "#ffffff";
+      document.body.appendChild(container);
+
+      let templateKey = (selectedTemplate || "jessica-claire").replace(/-/g, "");
+      const TemplateComponent = ResumeBuilderTemplates[templateKey] || ResumeBuilderTemplates["jessicaclaire"];
+
+      const { createRoot } = await import("react-dom/client");
+      const root = createRoot(container);
+
+      await new Promise((resolve) => {
+        root.render(<TemplateComponent data={dataToExport} />);
+        setTimeout(resolve, 350);
+      });
+
+      const resumeHTML = container.innerHTML;
+
+      let TemplateComponentCSSPath = "";
+      try {
+        TemplateComponentCSSPath = getTemplateCSS(selectedTemplate) || "";
+      } catch (e) {}
+
+      const fullHtml = `
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <meta charset="UTF-8" />
+            <title>${baseFileName}</title>
+            <style>
+              body { margin: 0; padding: 0; font-family: Arial, sans-serif; }
+              ${TemplateComponentCSSPath}
+            </style>
+          </head>
+          <body>${resumeHTML}</body>
+        </html>
+      `;
+
+      root.unmount();
+      document.body.removeChild(container);
+
+      const sanitize = (s) => (s || "").replace(/[^a-z0-9_ -]/gi, "").trim().replace(/\s+/g, "_");
+      const fileName = `${baseFileName}_${sanitize(documentTitle) || sanitize(dataToExport.fullName) || "Resume"}`;
+
+      if (format === "PDF") {
+        const response = await axiosInstance.post(
+          "/api/resume/generate-pdf",
+          { html: fullHtml },
+          { responseType: "blob" }
+        );
+        const blob = new Blob([response.data], { type: "application/pdf" });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `${fileName}.pdf`;
+        link.click();
+        window.URL.revokeObjectURL(url);
+      } else {
+        const wordHtml = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8"><title>${fileName}</title></head><body>${fullHtml}</body></html>`;
+        const blob = new Blob(["\uFEFF", wordHtml], { type: "application/msword" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `${fileName}.doc`;
+        link.click();
+        window.URL.revokeObjectURL(url);
+      }
+
+      try {
+        await axiosInstance.post("/api/downloads", {
+          name: fileName,
+          type: "resume",
+          format: format,
+          html: fullHtml,
+          template: selectedTemplate,
+          size: format === "PDF" ? "250 KB" : "200 KB"
+        });
+      } catch (e) {}
+    } catch (err) {
+      console.error("Export error:", err);
+      alert(`Failed to download ${format} resume: ` + (err.response?.data?.message || err.message));
+    } finally {
+      setDownloadingFormat("");
+    }
+  };
+
+  const handleFinish = async () => {
+    await handleGenerate100AtsResume();
   };
 
   useEffect(() => {
@@ -451,7 +585,7 @@ const ResumeBuilder = () => {
       link.href = url;
       const sanitize = (s) =>
         (s || "")
-          .replace(/[^a-z0-9_\- ]/gi, "")
+          .replace(/[^a-z0-9_ -]/gi, "")
           .trim()
           .replace(/\s+/g, "_");
       const fileName =
@@ -503,7 +637,7 @@ const ResumeBuilder = () => {
     const url = URL.createObjectURL(blob);
     const sanitize = (s) =>
       (s || "")
-        .replace(/[^a-z0-9_\- ]/gi, "")
+        .replace(/[^a-z0-9_ -]/gi, "")
         .trim()
         .replace(/\s+/g, "_");
     const fileName =
@@ -700,15 +834,37 @@ const ResumeBuilder = () => {
       <>
         {completion?.isComplete ? (
           <div className="px-4 mt-2">
-            <div className="flex gap-3 p-3 bg-emerald-50 border border-emerald-200 rounded-xl shadow-sm px-2">
-              <CheckCircle
-                className="text-emerald-500 flex-shrink-0 mt-0.5"
-                size={18}
-              />
-              <span className="text-sm font-medium text-emerald-800">
-                Resume Ready: All necessary information has been added. You can
-                now export your resume.
-              </span>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3.5 bg-gradient-to-r from-emerald-50 via-teal-50 to-indigo-50 border border-emerald-200/80 rounded-2xl shadow-sm">
+              <div className="flex gap-3 items-center">
+                <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0 text-emerald-600">
+                  <CheckCircle size={18} />
+                </div>
+                <div>
+                  <span className="text-sm font-bold text-slate-900 block">
+                    Resume Ready: All Information Added
+                  </span>
+                  <span className="text-xs text-slate-600">
+                    Ready to generate your 100% ATS-optimized resume or export original.
+                  </span>
+                </div>
+              </div>
+              <button
+                onClick={handleGenerate100AtsResume}
+                disabled={isOptimizingAts}
+                className="flex items-center gap-2 text-xs font-bold bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 hover:from-blue-700 hover:to-violet-700 text-white px-4 py-2 rounded-xl shadow-md transition-all self-end sm:self-auto flex-shrink-0 hover:scale-[1.02] active:scale-[0.98]"
+              >
+                {isOptimizingAts ? (
+                  <>
+                    <RefreshCw size={14} className="animate-spin" />
+                    <span>Optimizing...</span>
+                  </>
+                ) : (
+                  <>
+                    <Sparkles size={14} className="text-yellow-300 animate-pulse" />
+                    <span>✨ Generate 100% ATS Resume</span>
+                  </>
+                )}
+              </button>
             </div>
           </div>
         ) : (
@@ -787,11 +943,41 @@ const ResumeBuilder = () => {
                       <ArrowLeft size={16} />
                       <span className="hidden sm:inline">Previous</span>
                     </button>
-                    <button
-                      onClick={async () => {
-                        if (completion?.isComplete) {
-                          await handleFinish();
-                        } else {
+                    {currentIdx === tabs.length - 1 ? (
+                      <button
+                        onClick={async () => {
+                          if (!isSectionValid()) {
+                            setWarning(true);
+                            setWarningFields(getEmptyFieldNames());
+                            setHighlightEmpty(true);
+                            window.scrollTo({ top: 0, behavior: "smooth" });
+                            return;
+                          }
+                          setWarning(false);
+                          setWarningFields([]);
+                          setHighlightEmpty(false);
+                          await handleGenerate100AtsResume();
+                        }}
+                        disabled={isOptimizingAts || isSavingResume}
+                        className="flex gap-2 items-center text-sm font-bold bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 hover:from-blue-700 hover:to-violet-700 text-white px-5 sm:px-6 py-2.5 rounded-xl shadow-lg shadow-indigo-500/25 transition-all select-none hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
+                      >
+                        {isOptimizingAts ? (
+                          <>
+                            <RefreshCw size={16} className="animate-spin" />
+                            <span className="hidden sm:inline">Generating 100% ATS Resume...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Sparkles size={16} className="text-yellow-300 animate-pulse" />
+                            <span className="hidden sm:inline">Generate 100% ATS Resume with AI</span>
+                            <span className="sm:hidden">100% ATS AI</span>
+                            <ArrowRight size={16} />
+                          </>
+                        )}
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => {
                           if (!isSectionValid()) {
                             setWarning(true);
                             setWarningFields(getEmptyFieldNames());
@@ -803,24 +989,13 @@ const ResumeBuilder = () => {
                           setWarningFields([]);
                           setHighlightEmpty(false);
                           goRight();
-                        }
-                      }}
-                      disabled={
-                        isSavingResume ||
-                        !completion?.isComplete &&
-                        currentIdx === tabs.length - 1
-                      }
-                      className="flex gap-2 items-center text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg select-none disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm"
-                    >
-                      <span className="hidden sm:inline">
-                        {currentIdx === tabs.length - 1
-                          ? isSavingResume
-                            ? "Saving..."
-                            : "Finish"
-                          : "Next"}
-                      </span>
-                      <ArrowRight size={16} />
-                    </button>
+                        }}
+                        className="flex gap-2 items-center text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg select-none transition-all shadow-sm"
+                      >
+                        <span className="hidden sm:inline">Next</span>
+                        <ArrowRight size={16} />
+                      </button>
+                    )}
                   </div>
                 </div>
               </FloatingFormPanel>
@@ -860,42 +1035,58 @@ const ResumeBuilder = () => {
                   <ArrowLeft size={16} />
                   <span>Previous</span>
                 </button>
-                <button
-                  onClick={async () => {
-                    if (completion?.isComplete) {
-                      await handleFinish();
-                    } else {
+                {currentIdx === tabs.length - 1 ? (
+                  <button
+                    onClick={async () => {
                       if (!isSectionValid()) {
                         setWarning(true);
                         setWarningFields(getEmptyFieldNames());
                         setHighlightEmpty(true);
-                        formContainerRef.current?.scrollTo({
-                          top: 0,
-                          behavior: "smooth",
-                        });
+                        formContainerRef.current?.scrollTo({ top: 0, behavior: "smooth" });
+                        return;
+                      }
+                      setWarning(false);
+                      setWarningFields([]);
+                      setHighlightEmpty(false);
+                      await handleGenerate100AtsResume();
+                    }}
+                    disabled={isOptimizingAts || isSavingResume}
+                    className="flex gap-2 items-center text-xs sm:text-sm font-bold bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 hover:from-blue-700 hover:to-violet-700 text-white px-4 py-2 rounded-xl shadow-md transition-all select-none disabled:opacity-50"
+                  >
+                    {isOptimizingAts ? (
+                      <>
+                        <RefreshCw size={14} className="animate-spin" />
+                        <span>Optimizing...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles size={14} className="text-yellow-300 animate-pulse" />
+                        <span>100% ATS Resume AI</span>
+                        <ArrowRight size={14} />
+                      </>
+                    )}
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => {
+                      if (!isSectionValid()) {
+                        setWarning(true);
+                        setWarningFields(getEmptyFieldNames());
+                        setHighlightEmpty(true);
+                        formContainerRef.current?.scrollTo({ top: 0, behavior: "smooth" });
                         return;
                       }
                       setWarning(false);
                       setWarningFields([]);
                       setHighlightEmpty(false);
                       goRight();
-                    }
-                  }}
-                  disabled={
-                    isSavingResume ||
-                    !completion?.isComplete && currentIdx === tabs.length - 1
-                  }
-                  className="flex gap-2 items-center text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg select-none disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm"
-                >
-                  <span>
-                    {currentIdx === tabs.length - 1
-                      ? isSavingResume
-                        ? "Saving..."
-                        : "Finish"
-                      : "Next"}
-                  </span>
-                  <ArrowRight size={16} />
-                </button>
+                    }}
+                    className="flex gap-2 items-center text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg select-none transition-all shadow-sm"
+                  >
+                    <span>Next</span>
+                    <ArrowRight size={16} />
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -1037,6 +1228,20 @@ const ResumeBuilder = () => {
           setShowCompletionPopup(false);
           setActiveTab("templates");
         }}
+      />
+
+      {/* 100% ATS AI Optimization Modal with Dual Downloads */}
+      <AtsCompletionModal
+        show={showAtsModal}
+        onClose={() => setShowAtsModal(false)}
+        atsResult={atsOptimizationResult}
+        onApplyAtsToEditor={handleApplyAtsToEditor}
+        onDownload={handleExportFromModal}
+        onViewTemplates={() => {
+          setShowAtsModal(false);
+          setActiveTab("templates");
+        }}
+        downloading={downloadingFormat}
       />
     </div>
   );

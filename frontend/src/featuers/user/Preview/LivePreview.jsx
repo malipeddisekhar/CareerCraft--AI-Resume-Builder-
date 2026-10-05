@@ -350,7 +350,7 @@ const LivePreview = forwardRef((props, ref) => {
 
       const clean = (str) =>
         str
-          ?.replace(/[^a-z0-9_\- ]/gi, "")
+          ?.replace(/[^a-z0-9_ -]/gi, "")
           .trim()
           .replace(/\s+/g, "_");
 
@@ -790,38 +790,41 @@ const LivePreview = forwardRef((props, ref) => {
             </Section>
           )}
 
-        {(skills?.technical?.length !== 0 || skills?.soft?.length !== 0) && (
+        {((Array.isArray(skills?.technical) && skills.technical.length > 0) ||
+          (Array.isArray(skills?.soft) && skills.soft.length > 0)) && (
           <Section title="Skills">
-            <div className="flex flex-wrap gap-2 items-center">
-              <span className="font-bold text-sm">Technical Skills:</span>
-              <div className="flex gap-2">
-                {skills?.technical?.length !== 0 &&
-                  skills?.technical?.map((skill) => (
+            {Array.isArray(skills?.technical) && skills.technical.length > 0 && (
+              <div className="flex flex-wrap gap-2 items-center">
+                <span className="font-bold text-sm">Technical Skills:</span>
+                <div className="flex gap-2 flex-wrap">
+                  {skills.technical.map((skill, idx) => (
                     <span
-                      key={skill}
+                      key={idx}
                       className="px-2 py-1 bg-slate-100 rounded text-xs"
                     >
-                      {skill}
+                      {typeof skill === "string" ? skill : skill?.name || String(skill)}
                     </span>
                   ))}
+                </div>
               </div>
-            </div>
-            <div className="flex flex-nowrap gap-2 items-start mt-2">
-              <span className="font-bold text-sm whitespace-nowrap">
-                Soft Skills:
-              </span>
-              <div className="flex gap-2 flex-wrap w-[85%]">
-                {skills?.soft?.length !== 0 &&
-                  skills?.soft?.map((skill) => (
+            )}
+            {Array.isArray(skills?.soft) && skills.soft.length > 0 && (
+              <div className="flex flex-nowrap gap-2 items-start mt-2">
+                <span className="font-bold text-sm whitespace-nowrap">
+                  Soft Skills:
+                </span>
+                <div className="flex gap-2 flex-wrap w-[85%]">
+                  {skills.soft.map((skill, idx) => (
                     <span
-                      key={skill}
+                      key={idx}
                       className="px-2 py-1 bg-slate-100 rounded text-xs"
                     >
-                      {skill}
+                      {typeof skill === "string" ? skill : skill?.name || String(skill)}
                     </span>
                   ))}
+                </div>
               </div>
-            </div>
+            )}
           </Section>
         )}
       </div>

@@ -9,6 +9,8 @@ import {
   Save,
   X,
   Lock,
+  Sparkles,
+  RefreshCw,
 } from "lucide-react";
 
 import "./EditProfile.css";
@@ -16,6 +18,7 @@ import UserNavBar from "../UserNavBar/UserNavBar";
 import axios from "../../../api/axios";
 import toast from "react-hot-toast";
 import ReactGoogleAutocomplete from "react-google-autocomplete";
+
 
 const EditProfile = () => {
 
@@ -36,6 +39,7 @@ const EditProfile = () => {
 
   const [loading, setLoading] = useState(false);
   const [fetchingProfile, setFetchingProfile] = useState(true);
+  const [isEnhancingBio, setIsEnhancingBio] = useState(false);
   const [errors, setErrors] = useState({
     fullName: "",
     phone: "",
@@ -188,6 +192,34 @@ const EditProfile = () => {
         duration: 4000,
         position: 'top-right'
       });
+    }
+  };
+
+  const handleEnhanceBio = async () => {
+    try {
+      setIsEnhancingBio(true);
+      const response = await axios.post("/api/user/enhance-bio", {
+        fullName: formData.fullName,
+        location: formData.location,
+        github: formData.github,
+        linkedin: formData.linkedin,
+        bio: formData.bio,
+      });
+      if (response.data?.enhancedBio) {
+        setFormData(prev => ({ ...prev, bio: response.data.enhancedBio }));
+        toast.success("Bio enhanced with AI! Review and save when ready.", {
+          duration: 4000,
+          position: 'top-right'
+        });
+      }
+    } catch (err) {
+      console.error("AI bio enhancement failed:", err);
+      toast.error("AI enhancement failed. Please try again.", {
+        duration: 4000,
+        position: 'top-right'
+      });
+    } finally {
+      setIsEnhancingBio(false);
     }
   };
 
@@ -576,11 +608,50 @@ const EditProfile = () => {
                     <h3>Bio</h3>
                     <div className="field-row">
                       <div className="field-group full-width">
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                          <label style={{ margin: 0 }}>Tell us about yourself</label>
+                          <button
+                            type="button"
+                            onClick={handleEnhanceBio}
+                            disabled={isEnhancingBio}
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '6px',
+                              background: 'linear-gradient(135deg, #3b82f6, #6366f1)',
+                              color: 'white',
+                              border: 'none',
+                              padding: '6px 14px',
+                              borderRadius: '8px',
+                              cursor: isEnhancingBio ? 'not-allowed' : 'pointer',
+                              fontSize: '0.8rem',
+                              fontWeight: '600',
+                              opacity: isEnhancingBio ? 0.7 : 1,
+                              transition: 'all 0.2s ease',
+                              boxShadow: '0 2px 8px rgba(99,102,241,0.3)',
+                            }}
+                          >
+                            {isEnhancingBio ? (
+                              <>
+                                <svg style={{ width: 14, height: 14, animation: 'spin 1s linear infinite' }} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" style={{ opacity: 0.25 }}/>
+                                  <path fill="currentColor" style={{ opacity: 0.75 }} d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+                                </svg>
+                                Enhancing...
+                              </>
+                            ) : (
+                              <>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3l1.88 5.76a1 1 0 00.95.69h6.06l-4.91 3.57a1 1 0 00-.36 1.12L17.5 20l-4.91-3.57a1 1 0 00-1.18 0L6.5 20l1.88-5.86a1 1 0 00-.36-1.12L3.11 9.45h6.06a1 1 0 00.95-.69L12 3z"/></svg>
+                                ✨ Enhance with AI
+                              </>
+                            )}
+                          </button>
+                        </div>
                         <textarea
                           name="bio"
                           value={formData.bio}
                           onChange={handleChange}
-                          placeholder="Tell us about yourself..."
+                          placeholder="Tell us about yourself... (or click ✨ Enhance with AI to auto-generate)"
                           style={{
                             width: '100%',
                             padding: '0.75rem',
@@ -591,6 +662,9 @@ const EditProfile = () => {
                             resize: 'vertical'
                           }}
                         />
+                        <p style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '4px' }}>
+                          💡 AI will generate a professional bio based on your profile info
+                        </p>
                       </div>
                     </div>
                   </div>

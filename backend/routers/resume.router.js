@@ -17,8 +17,11 @@ import {
   generateAICoverLetter,
   generateAIResume,
   getUserResume,
-  getJobRecommendations
+  getJobRecommendations,
+  suggestSkills,
+  optimizeResumeATS
 } from "../controllers/Resume.controller.js";
+
 
 import isAuth from "../middlewares/isAuth.js";
 
@@ -106,6 +109,12 @@ resumeRouter.post("/job-recommendations", isAuth, getJobRecommendations);
 
 
 /* =====================================================
+   SUGGEST AI SKILLS
+===================================================== */
+resumeRouter.post("/suggest-skills", isAuth, suggestSkills);
+
+
+/* =====================================================
    GENERATE AI COVER LETTER
 ===================================================== */
 resumeRouter.post("/cover-letter/generate", generateCoverLetter);
@@ -139,6 +148,25 @@ resumeRouter.post(
   isAuth,
   generateAICoverLetter
 );
+
+/* =====================================================
+   SUGGEST SKILLS (AI)
+===================================================== */
+resumeRouter.post(
+  "/suggest-skills",
+  isAuth,
+  suggestSkills
+);
+
+/* =====================================================
+   OPTIMIZE RESUME FOR 100% ATS COMPLIANCE (AI)
+===================================================== */
+resumeRouter.post(
+  "/optimize-ats",
+  isAuth,
+  optimizeResumeATS
+);
+
 
 
 /* =====================================================

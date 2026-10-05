@@ -208,7 +208,7 @@ const CVBuilder = () => {
 
       const sanitize = (s) =>
         (s || "")
-          .replace(/[^a-z0-9_\- ]/gi, "")
+          .replace(/[^a-z0-9_ -]/gi, "")
           .trim()
           .replace(/\s+/g, "_");
 
@@ -442,7 +442,7 @@ const CVBuilder = () => {
       a.href = url;
       const clean = (s) =>
         (s || "")
-          .replace(/[^a-z0-9_\- ]/gi, "")
+          .replace(/[^a-z0-9_ -]/gi, "")
           .trim()
           .replace(/\s+/g, "_");
       a.download = `${clean(documentTitle) || clean(formData.fullName) || "CV"}.doc`;
@@ -535,7 +535,7 @@ const CVBuilder = () => {
 
       const clean = (str) =>
         str
-          ?.replace(/[^a-z0-9_\- ]/gi, "")
+          ?.replace(/[^a-z0-9_ -]/gi, "")
           .trim()
           .replace(/\s+/g, "_");
       const name = clean(documentTitle) || clean(displayData?.fullName) || "CV";

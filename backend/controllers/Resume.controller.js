@@ -7,8 +7,11 @@ import {
   refineExperienceDescription,
   refineProjectDescription,
   generateJobRecommendationsAI,
-  extractResumeData as extractResumeDataAI
+  extractResumeData as extractResumeDataAI,
+  suggestSkillsAI,
+  optimizeResumeForATS
 } from "../ai/aiService.js";
+
 
 // Resume Parsing Services
 import {
@@ -976,3 +979,48 @@ export const generateAICoverLetter = async (req, res) => {
     });
   }
 };
+
+/* =====================================================
+   SUGGEST SKILLS WITH AI
+   Returns AI-suggested technical and soft skills
+===================================================== */
+export const suggestSkills = async (req, res) => {
+  try {
+    const { experience, education, projects, skills } = req.body;
+
+    const suggestions = await suggestSkillsAI({ experience, education, projects, skills });
+
+    return res.json({
+      success: true,
+      suggestions
+    });
+  } catch (error) {
+    console.error("AI SKILL SUGGESTION ERROR:", error);
+    res.status(500).json({
+      success: false,
+      error: "AI skill suggestion failed: " + error.message
+    });
+  }
+};
+
+/* =====================================================
+   OPTIMIZE RESUME FOR 100% ATS COMPLIANCE (AI)
+   Transforms full resume data to achieve 98-100 ATS score
+===================================================== */
+export const optimizeResumeATS = async (req, res) => {
+  try {
+    const resumeData = req.body;
+    console.log("ATS 100% Optimization requested by user:", req.userId);
+
+    const result = await optimizeResumeForATS(resumeData);
+
+    return res.status(200).json(result);
+  } catch (error) {
+    console.error("ATS OPTIMIZATION ERROR:", error);
+    res.status(500).json({
+      success: false,
+      error: "ATS optimization failed: " + error.message
+    });
+  }
+};
+

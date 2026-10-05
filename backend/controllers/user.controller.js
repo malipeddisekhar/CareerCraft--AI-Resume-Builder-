@@ -1,6 +1,7 @@
 
 import { pool } from "../config/postgresdb.js";
 import crypto from "crypto";
+import { enhanceBio } from "../ai/aiService.js";
 
 /* ================== USER DASHBOARD ================== */
 export const getDashboardData = async (req, res) => {
@@ -771,5 +772,34 @@ export const rejectAdminRequest = async (req, res) => {
   } catch (error) {
     console.error("Reject admin error:", error);
     res.status(500).json({ message: "Failed to reject admin request", error: error.message });
+  }
+};
+
+/* ================== ENHANCE PROFILE BIO WITH AI ================== */
+export const enhanceProfileBio = async (req, res) => {
+  try {
+    const { fullName, location, github, linkedin, bio } = req.body;
+
+    if (!fullName && !bio) {
+      return res.status(400).json({
+        success: false,
+        error: "Please provide at least your name or an existing bio to enhance."
+      });
+    }
+
+    console.log("AI Bio Enhancement requested for user:", req.userId);
+
+    const enhancedBio = await enhanceBio({ fullName, location, github, linkedin, bio });
+
+    return res.status(200).json({
+      success: true,
+      enhancedBio
+    });
+  } catch (error) {
+    console.error("AI Bio Enhancement error:", error);
+    res.status(500).json({
+      success: false,
+      error: "AI bio enhancement failed: " + error.message
+    });
   }
 };
