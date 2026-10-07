@@ -5,29 +5,79 @@ import Footer from "./Footer";
 import { TEMPLATES } from "../../featuers/user/Templates/TemplateRegistry";
 import axiosInstance from "../../api/axios";
 
+const resolveImageUrl = (target) => {
+  if (!target) return "";
+  const url = String(target);
+  if (
+    url.startsWith("http://") ||
+    url.startsWith("https://") ||
+    url.startsWith("blob:") ||
+    url.startsWith("data:")
+  ) {
+    return url;
+  }
+  if (
+    url.startsWith("/src/") ||
+    url.startsWith("/assets/") ||
+    url.includes("template_thumnail") ||
+    url.startsWith("@")
+  ) {
+    return url;
+  }
+  const baseUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+  const cleanPath = url.replace(/\\/g, "/");
+  return `${baseUrl}${cleanPath.startsWith("/") ? "" : "/"}${cleanPath}`;
+};
+
 function TemplatesPage() {
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [hoveredTemplate, setHoveredTemplate] = useState(null);
   const [statuses, setStatuses] = useState({});
+  const [allTemplates, setAllTemplates] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchStatuses = async () => {
+    const fetchTemplatesData = async () => {
       try {
-        const res = await axiosInstance.get('/api/template-visibility');
-        setStatuses(res.data || {});
+        const [visRes, dbRes] = await Promise.allSettled([
+          axiosInstance.get('/api/template-visibility'),
+          axiosInstance.get('/api/template?status=approved')
+        ]);
+
+        const visibilityMap = visRes.status === "fulfilled" ? visRes.value.data || {} : {};
+        setStatuses(visibilityMap);
+
+        const dbList = dbRes.status === "fulfilled" && Array.isArray(dbRes.value.data) ? dbRes.value.data : [];
+        const matchingDb = dbList
+          .filter(t => (t.type || "resume").toLowerCase() === "resume")
+          .map(t => ({
+            id: t._id || t.id,
+            name: t.name,
+            category: t.category || "Modern",
+            thumbnail: resolveImageUrl(t.imageUrl || t.previewimage),
+            description: t.description,
+            isDynamic: true,
+          }));
+
+        const staticList = TEMPLATES.map(t => ({
+          ...t,
+          thumbnail: resolveImageUrl(t.thumbnail)
+        }));
+
+        setAllTemplates([...matchingDb, ...staticList]);
       } catch (error) {
-        console.error("Failed to fetch template statuses", error);
+        console.error("Failed to fetch templates", error);
+        setAllTemplates(TEMPLATES.map(t => ({ ...t, thumbnail: resolveImageUrl(t.thumbnail) })));
       } finally {
         setLoading(false);
       }
     };
-    fetchStatuses();
+    fetchTemplatesData();
   }, []);
 
   // Filter templates: Must be active (default true) AND match category
-  const availableTemplates = TEMPLATES.filter(t => statuses[t.id] !== false);
+  const availableTemplates = allTemplates.filter(t => statuses[t.id] !== false);
 
   const filteredTemplates = selectedCategory === "all"
     ? availableTemplates
@@ -45,7 +95,8 @@ function TemplatesPage() {
   ];
 
   const handleCreateResume = (template) => {
-    navigate("/builder", { state: { template } });
+    localStorage.setItem("currentTemplate", JSON.stringify(template.id));
+    navigate("/user/resume-builder");
   };
 
   return (

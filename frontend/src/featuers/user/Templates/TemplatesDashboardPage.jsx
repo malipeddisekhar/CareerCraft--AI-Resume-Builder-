@@ -1,4 +1,5 @@
 import React, { useMemo, useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Search,
   Filter,
@@ -15,6 +16,50 @@ import { motion, AnimatePresence } from "framer-motion";
 import UserNavBar from "../UserNavBar/UserNavBar";
 import { TEMPLATES } from "./TemplateRegistry";
 import axiosInstance from "../../../api/axios";
+
+const resolveImageUrl = (target) => {
+  if (!target) return "";
+  const url = String(target);
+  if (
+    url.startsWith("http://") ||
+    url.startsWith("https://") ||
+    url.startsWith("blob:") ||
+    url.startsWith("data:")
+  ) {
+    return url;
+  }
+  if (
+    url.startsWith("/src/") ||
+    url.startsWith("/assets/") ||
+    url.includes("template_thumnail") ||
+    url.startsWith("@")
+  ) {
+    return url;
+  }
+  const baseUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+  const cleanPath = url.replace(/\\/g, "/");
+  return `${baseUrl}${cleanPath.startsWith("/") ? "" : "/"}${cleanPath}`;
+};
+
+function getCategoryBucketKey(category) {
+  const cat = String(category || "").trim().toLowerCase();
+  if (cat.includes("contemporary") || cat.includes("modern")) {
+    return "Contemporary Templates";
+  }
+  if (cat.includes("creative") || cat.includes("design") || cat.includes("art")) {
+    return "Creative Templates";
+  }
+  if (
+    cat.includes("traditional") ||
+    cat.includes("professional") ||
+    cat.includes("academic") ||
+    cat.includes("minimal") ||
+    cat.includes("elegant")
+  ) {
+    return "Traditional Templates";
+  }
+  return "Contemporary Templates";
+}
 
 // ========== HELPER: Escape Key Listener ==========
 const FullScreenEscape = ({ onClose }) => {
@@ -151,6 +196,7 @@ const TemplatesDashboardPage = ({
   isEmbedded = false,
   externalSearchTerm,
 }) => {
+  const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [fetchedTemplates, setFetchedTemplates] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -223,20 +269,48 @@ const TemplatesDashboardPage = ({
 
   const fetchTemplates = async () => {
     try {
-      const statusRes = await axiosInstance.get("/api/template-visibility");
+      // 1. Fetch visibility toggle statuses
+      const statusRes = await axiosInstance.get("/api/template-visibility").catch(() => ({ data: {} }));
       const statuses = statusRes.data || {};
-      const activeTemplates = TEMPLATES.filter((t) => statuses[t.id] !== false);
 
-      const mappedData = activeTemplates.map((item) => ({
-        id: item.id,
-        name: item.name,
-        category: item.category,
-        img: item.thumbnail,
-        description: item.description,
-        isDynamic: true,
-      }));
+      // 2. Fetch approved DB templates
+      const dbRes = await axiosInstance.get("/api/template?status=approved").catch(() => ({ data: [] }));
+      const dbTemplates = Array.isArray(dbRes.data) ? dbRes.data : [];
 
-      setFetchedTemplates(mappedData);
+      // Filter to resumes (or untyped default to resume)
+      const matchingDb = dbTemplates.filter((t) => {
+        const tType = (t.type || "resume").toLowerCase();
+        return tType === "resume";
+      });
+
+      // 3. Map DB templates (newly created appear first)
+      const dbMapped = matchingDb
+        .filter((t) => statuses[t._id || t.id] !== false)
+        .map((t) => ({
+          id: t._id || t.id,
+          name: t.name,
+          category: t.category || "Contemporary",
+          img: resolveImageUrl(t.imageUrl || t.previewimage),
+          description: t.description || "Custom uploaded template",
+          isDynamic: true,
+          isDbTemplate: true,
+          fileUrl: t.fileUrl || t.file_path,
+        }));
+
+      // 4. Map static templates
+      const staticMapped = TEMPLATES
+        .filter((t) => statuses[t.id] !== false)
+        .map((item) => ({
+          id: item.id,
+          name: item.name,
+          category: item.category,
+          img: resolveImageUrl(item.thumbnail),
+          description: item.description,
+          isDynamic: false,
+          isDbTemplate: false,
+        }));
+
+      setFetchedTemplates([...dbMapped, ...staticMapped]);
       setLoading(false);
     } catch (err) {
       console.error("Error loading templates:", err);
@@ -244,9 +318,9 @@ const TemplatesDashboardPage = ({
         id: item.id,
         name: item.name,
         category: item.category,
-        img: item.thumbnail,
+        img: resolveImageUrl(item.thumbnail),
         description: item.description,
-        isDynamic: true,
+        isDynamic: false,
       }));
       setFetchedTemplates(fallbackData);
       setLoading(false);
@@ -260,16 +334,14 @@ const TemplatesDashboardPage = ({
     );
   }, [fetchedTemplates, search, externalSearchTerm]);
 
-  const modern = filteredTemplates.filter((t) =>
-    ["modern", "Modern", "Modern Templates"].includes(t.category),
+  const modern = filteredTemplates.filter(
+    (t) => getCategoryBucketKey(t.category) === "Contemporary Templates"
   );
-  const creative = filteredTemplates.filter((t) =>
-    ["creative", "Creative", "Creative Templates"].includes(t.category),
+  const creative = filteredTemplates.filter(
+    (t) => getCategoryBucketKey(t.category) === "Creative Templates"
   );
-  const professional = filteredTemplates.filter((t) =>
-    ["professional", "Professional", "Professional Templates"].includes(
-      t.category,
-    ),
+  const professional = filteredTemplates.filter(
+    (t) => getCategoryBucketKey(t.category) === "Traditional Templates"
   );
 
   const handlePreview = (template) => {
@@ -278,10 +350,11 @@ const TemplatesDashboardPage = ({
   };
 
   const handleUseTemplate = (templateId) => {
+    localStorage.setItem("currentTemplate", JSON.stringify(templateId));
     if (onSelectTemplate) {
       onSelectTemplate(templateId);
     } else {
-      console.log("Selected template:", templateId);
+      navigate("/user/resume-builder");
     }
   };
 

@@ -8,6 +8,30 @@ import CoverLetterTemplatesMap from "./CoverLetterTemplatesMap";
 import axiosInstance from "../../../api/axios";
 import { COVER_LETTER_TEMPLATES } from "./CoverLetterRegistry";
 
+const resolveImageUrl = (target) => {
+  if (!target) return "";
+  const url = String(target);
+  if (
+    url.startsWith("http://") ||
+    url.startsWith("https://") ||
+    url.startsWith("blob:") ||
+    url.startsWith("data:")
+  ) {
+    return url;
+  }
+  if (
+    url.startsWith("/src/") ||
+    url.startsWith("/assets/") ||
+    url.includes("template_thumnail") ||
+    url.startsWith("@")
+  ) {
+    return url;
+  }
+  const baseUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+  const cleanPath = url.replace(/\\/g, "/");
+  return `${baseUrl}${cleanPath.startsWith("/") ? "" : "/"}${cleanPath}`;
+};
+
 /* ─── constants ─────────────────────────────────────────────────────────── */
 const CATEGORIES = Object.freeze(['All Examples', 'Professional', 'Modern', 'Creative', 'Minimal', 'Elegant']);
 
@@ -33,7 +57,11 @@ const TemplateCard = memo(({ template, isSelected, displayData, onPreview, onUse
           className="absolute inset-0 pointer-events-none origin-top-left"
           style={{ transform: "scale(0.35)", width: "794px", height: "1123px" }}
         >
-          {TemplateComponent && <TemplateComponent formData={displayData} />}
+          {TemplateComponent ? (
+            <TemplateComponent formData={displayData} />
+          ) : template.image ? (
+            <img src={template.image} alt={template.name} className="w-[794px] h-[1123px] object-cover" />
+          ) : null}
         </div>
 
         {/* Gradient Overlay */}
@@ -197,7 +225,11 @@ const PreviewModalComponent = memo(({ template, zoomLevel, displayData, onZoomCh
           }}
           onClick={(e) => e.stopPropagation()}
         >
-          {TemplateComponent && <TemplateComponent formData={displayData} />}
+          {TemplateComponent ? (
+            <TemplateComponent formData={displayData} />
+          ) : template.image ? (
+            <img src={template.image} alt={template.name} className="w-full h-auto object-contain mx-auto" />
+          ) : null}
         </div>
       </div>
 
@@ -240,21 +272,42 @@ const CoverLetterTemplates = ({ selectedTemplate, onSelectTemplate, formData: pr
   const [displayData, setDisplayData] = useState({});
   const [mounted, setMounted] = useState(false);
   const [statuses, setStatuses] = useState({});
+  const [allTemplates, setAllTemplates] = useState(COVER_LETTER_TEMPLATES);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let isMounted = true;
-    const fetchStatuses = async () => {
+    const fetchStatusesAndTemplates = async () => {
       try {
-        const res = await axiosInstance.get('/api/template-visibility');
-        if (isMounted) setStatuses(res.data || {});
+        const [visRes, dbRes] = await Promise.allSettled([
+          axiosInstance.get('/api/template-visibility'),
+          axiosInstance.get('/api/template?status=approved')
+        ]);
+        if (isMounted) {
+          if (visRes.status === "fulfilled") setStatuses(visRes.value.data || {});
+          if (dbRes.status === "fulfilled" && Array.isArray(dbRes.value.data)) {
+            const dbList = dbRes.value.data
+              .filter(t => (t.type || "").toLowerCase() === "cover-letter")
+              .map(t => ({
+                id: t._id || t.id,
+                name: t.name,
+                category: t.category || "Professional",
+                level: "All Levels",
+                image: resolveImageUrl(t.imageUrl || t.previewimage),
+                isDynamic: true,
+              }));
+            if (dbList.length > 0) {
+              setAllTemplates([...dbList, ...COVER_LETTER_TEMPLATES]);
+            }
+          }
+        }
       } catch (error) {
         console.error("Failed to fetch template statuses", error);
       } finally {
         if (isMounted) setLoading(false);
       }
     };
-    fetchStatuses();
+    fetchStatusesAndTemplates();
     return () => { isMounted = false; };
   }, []);
 
@@ -285,7 +338,7 @@ const CoverLetterTemplates = ({ selectedTemplate, onSelectTemplate, formData: pr
   }, [previewTemplate]);
 
   const filteredTemplates = useMemo(() => {
-    return COVER_LETTER_TEMPLATES.filter(tpl => {
+    return allTemplates.filter(tpl => {
       // 1. Filter by visibility status from admin (default active: true)
       if (statuses[tpl.id] === false) return false;
 
@@ -294,7 +347,7 @@ const CoverLetterTemplates = ({ selectedTemplate, onSelectTemplate, formData: pr
       const matchesSearch = tpl.name.toLowerCase().includes(searchQuery.toLowerCase());
       return matchesCategory && matchesSearch;
     });
-  }, [activeCategory, searchQuery, statuses]);
+  }, [allTemplates, activeCategory, searchQuery, statuses]);
 
   const handleUseTemplate = useCallback((templateId) => {
     if (onSelectTemplate) {

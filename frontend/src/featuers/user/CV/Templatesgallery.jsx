@@ -5,6 +5,30 @@ import CVTemplates from "./Cvtemplates";
 import mergeWithSampleData, { hasAnyUserData, getFilteredDisplayData } from "../../../utils/Datahelpers";
 import { createPortal } from "react-dom";
 
+const resolveImageUrl = (target) => {
+  if (!target) return "";
+  const url = String(target);
+  if (
+    url.startsWith("http://") ||
+    url.startsWith("https://") ||
+    url.startsWith("blob:") ||
+    url.startsWith("data:")
+  ) {
+    return url;
+  }
+  if (
+    url.startsWith("/src/") ||
+    url.startsWith("/assets/") ||
+    url.includes("template_thumnail") ||
+    url.startsWith("@")
+  ) {
+    return url;
+  }
+  const baseUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+  const cleanPath = url.replace(/\\/g, "/");
+  return `${baseUrl}${cleanPath.startsWith("/") ? "" : "/"}${cleanPath}`;
+};
+
 /* ─── constants ─────────────────────────────────────────────────────────── */
 export const templates = [
   { id: "professional", name: "Professional", category: "Traditional" },
@@ -52,7 +76,11 @@ const TemplateCard = memo(({ template, isSelected, displayData, onPreview, onUse
     <div className={S.card}>
       <div className={S.previewBox}>
         <div className="absolute inset-0 pointer-events-none" style={S.previewScale}>
-          {TemplateComponent && <TemplateComponent formData={displayData} />}
+          {TemplateComponent ? (
+            <TemplateComponent formData={displayData} />
+          ) : template.image ? (
+            <img src={template.image} alt={template.name} className="w-[794px] h-[1123px] object-cover" />
+          ) : null}
         </div>
         <div className={S.overlay}>
           <h3 className="text-base font-semibold text-white truncate">{template.name}</h3>
@@ -156,7 +184,13 @@ const PreviewModal = memo(({ template, zoomLevel, onZoomChange, onClose, onUse, 
       <div className={`flex-1 overflow-auto bg-slate-100 flex justify-center ${isExpanded ? 'p-0' : 'p-8 pt-8'}`}>
         <div ref={modalContentRef} className={`${mc.bg} ${isExpanded ? 'w-full min-h-screen' : ''}`} style={isExpanded ? mc.expanded : { ...mc.expanded }} onClick={(e) => e.stopPropagation()}>
           <div className={`w-full ${isExpanded ? 'min-h-screen flex justify-center' : 'h-full'}`} style={{ contain: 'layout style paint' }}>
-            <div className={isExpanded ? mc.inner : ''}>{TemplateComponent && <TemplateComponent key={`template-${refreshKey}`} formData={displayData} />}</div>
+            <div className={isExpanded ? mc.inner : ''}>
+              {TemplateComponent ? (
+                <TemplateComponent key={`template-${refreshKey}`} formData={displayData} />
+              ) : template.image ? (
+                <img src={template.image} alt={template.name} className="w-[794px] min-h-[1123px] object-contain mx-auto" />
+              ) : null}
+            </div>
           </div>
         </div>
       </div>
@@ -178,6 +212,7 @@ const PreviewModal = memo(({ template, zoomLevel, onZoomChange, onClose, onUse, 
 const TemplatesGallery = memo(({ selectedTemplate, onSelectTemplate, formData }) => {
   const [previewTemplate, setPreviewTemplate] = useState(null);
   const [statuses, setStatuses] = useState({});
+  const [allTemplates, setAllTemplates] = useState(templates);
   const [zoomLevel, setZoomLevel] = useState(100);
   const [mounted, setMounted] = useState(false);
 
@@ -186,17 +221,40 @@ const TemplatesGallery = memo(({ selectedTemplate, onSelectTemplate, formData })
 
   useEffect(() => {
     let cancelled = false;
-    const fetchStatuses = async () => {
-      try { const res = await axiosInstance.get('/api/template-visibility'); if (!cancelled) setStatuses(res.data || {}); }
-      catch (err) { console.error("Error loading template statuses:", err); }
+    const fetchStatusesAndTemplates = async () => {
+      try {
+        const [statusRes, dbRes] = await Promise.allSettled([
+          axiosInstance.get('/api/template-visibility'),
+          axiosInstance.get('/api/template?status=approved')
+        ]);
+        if (!cancelled) {
+          if (statusRes.status === "fulfilled") setStatuses(statusRes.value.data || {});
+          if (dbRes.status === "fulfilled" && Array.isArray(dbRes.value.data)) {
+            const dbList = dbRes.value.data
+              .filter(t => (t.type || "").toLowerCase() === "cv")
+              .map(t => ({
+                id: t._id || t.id,
+                name: t.name,
+                category: t.category || "Contemporary",
+                image: resolveImageUrl(t.imageUrl || t.previewimage),
+                isDynamic: true,
+              }));
+            if (dbList.length > 0) {
+              setAllTemplates([...dbList, ...templates]);
+            }
+          }
+        }
+      } catch (err) {
+        console.error("Error loading template statuses/list:", err);
+      }
     };
-    fetchStatuses();
+    fetchStatusesAndTemplates();
     return () => { cancelled = true; };
   }, []);
 
   const displayData = useMemo(() => getFilteredDisplayData(formData), [formData]);
   const showingUserData = useMemo(() => hasAnyUserData(formData), [formData]);
-  const activeTemplates = useMemo(() => templates.filter((t) => statuses[t.id] !== false), [statuses]);
+  const activeTemplates = useMemo(() => allTemplates.filter((t) => statuses[t.id] !== false), [allTemplates, statuses]);
   const filtered = useMemo(() => ({
     traditional: activeTemplates.filter((t) => t.category === "Traditional"),
     contemporary: activeTemplates.filter((t) => t.category === "Contemporary"),

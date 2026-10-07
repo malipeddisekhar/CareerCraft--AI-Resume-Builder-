@@ -133,6 +133,34 @@ const ResumeBuilder = () => {
       ? JSON.parse(storedTemplate)
       : TEMPLATES[0]?.id || "jessica-claire";
   });
+
+  useEffect(() => {
+    const loadDynamicTemplates = async () => {
+      try {
+        const res = await axiosInstance.get("/api/template?status=approved");
+        const dbTemplates = Array.isArray(res.data) ? res.data : [];
+        const matchingDb = dbTemplates
+          .filter((t) => (t.type || "resume").toLowerCase() === "resume")
+          .map((t) => ({
+            id: t._id || t.id,
+            name: t.name,
+            category: t.category,
+            thumbnail: t.imageUrl || t.previewimage,
+            description: t.description,
+            isDynamic: true,
+            isDbTemplate: true,
+            fileUrl: t.fileUrl || t.file_path,
+          }));
+        if (matchingDb.length > 0) {
+          setTemplates([...matchingDb, ...TEMPLATES]);
+        }
+      } catch (err) {
+        console.warn("Could not load dynamic templates in ResumeBuilder:", err);
+      }
+    };
+    loadDynamicTemplates();
+  }, []);
+
   useEffect(() => {
     localStorage.setItem("currentTemplate", JSON.stringify(selectedTemplate));
   }, [selectedTemplate]);
