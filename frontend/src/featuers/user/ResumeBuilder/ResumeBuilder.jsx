@@ -5,7 +5,6 @@ import {
   ArrowRight,
   Award,
   Briefcase,
-  CheckCircle,
   FolderKanban,
   GraduationCap,
   User,
@@ -870,42 +869,7 @@ const ResumeBuilder = () => {
     // BUILDER TAB – mirror CV layout with floating form + desktop preview
     return (
       <>
-        {completion?.isComplete ? (
-          <div className="px-4 mt-2">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3.5 bg-gradient-to-r from-emerald-50 via-teal-50 to-indigo-50 border border-emerald-200/80 rounded-2xl shadow-sm">
-              <div className="flex gap-3 items-center">
-                <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0 text-emerald-600">
-                  <CheckCircle size={18} />
-                </div>
-                <div>
-                  <span className="text-sm font-bold text-slate-900 block">
-                    Resume Ready: All Information Added
-                  </span>
-                  <span className="text-xs text-slate-600">
-                    Ready to generate your 100% ATS-optimized resume or export original.
-                  </span>
-                </div>
-              </div>
-              <button
-                onClick={handleGenerate100AtsResume}
-                disabled={isOptimizingAts}
-                className="flex items-center gap-2 text-xs font-bold bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 hover:from-blue-700 hover:to-violet-700 text-white px-4 py-2 rounded-xl shadow-md transition-all self-end sm:self-auto flex-shrink-0 hover:scale-[1.02] active:scale-[0.98]"
-              >
-                {isOptimizingAts ? (
-                  <>
-                    <RefreshCw size={14} className="animate-spin" />
-                    <span>Optimizing...</span>
-                  </>
-                ) : (
-                  <>
-                    <Sparkles size={14} className="text-yellow-300 animate-pulse" />
-                    <span>✨ Generate 100% ATS Resume</span>
-                  </>
-                )}
-              </button>
-            </div>
-          </div>
-        ) : (
+        {!completion?.isComplete && (
           <div className="px-4 mt-2">
             <div className="flex gap-3 p-3 bg-amber-50 border border-amber-200 rounded-xl shadow-sm px-2">
               <AlertTriangle
