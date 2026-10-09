@@ -1,0 +1,32 @@
+{
+  "fullName": "Kattamuri Hemu",
+  "email": "hemu@example.com",
+  "phone": "9876543210",
+  "location": "Hyderabad",
+  "summary": "Experienced Full Stack Engineer",
+  "experience": [
+    {
+      "title": "Full Stack Engineer",
+      "company": "TechCorp",
+      "location": "Hyderabad",
+      "startDate": "2023",
+      "endDate": "Present",
+      "description": "Built scalable cloud web apps."
+    }
+  ],
+  "education": [
+    {
+      "degree": "B.Tech CS",
+      "school": "KL University",
+      "graduationDate": "2021",
+      "gpa": "8.8"
+    }
+  ],
+  "skills": {
+    "technical": [
+      "JavaScript",
+      "React",
+      "Node.js"
+    ]
+  }
+}

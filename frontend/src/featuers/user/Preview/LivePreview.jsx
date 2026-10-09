@@ -32,6 +32,7 @@ import {
 } from "lucide-react";
 import { FaLinkedin } from "react-icons/fa";
 import ResumeBuilderTemplates from "../ResumeBuilder/ResumeBuilderTemplates";
+import DynamicParsedTemplate from "../Templates/DynamicParsedTemplate";
 
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
@@ -266,9 +267,10 @@ const LivePreview = forwardRef((props, ref) => {
 
   const downloadPDF = async () => {
     const CV_WIDTH = 794;
-    let selectedTemplate = currentTemplate.id.replace(/-/g, "");
+    const isDynamic = currentTemplate?.isDynamic || currentTemplate?.isDbTemplate;
+    let selectedTemplate = currentTemplate?.id ? currentTemplate.id.replace(/-/g, "") : "";
     const TemplateComponent = ResumeBuilderTemplates[selectedTemplate];
-    if (!TemplateComponent) return;
+    if (!TemplateComponent && !isDynamic) return;
 
     let container;
     try {
@@ -289,7 +291,11 @@ const LivePreview = forwardRef((props, ref) => {
 
       await new Promise((resolve) => {
         const root = createRoot(container);
-        root.render(<TemplateComponent data={formData} />);
+        if (isDynamic) {
+          root.render(<DynamicParsedTemplate template={currentTemplate} data={formData} />);
+        } else {
+          root.render(<TemplateComponent data={formData} />);
+        }
         setTimeout(resolve, 400);
       });
       // Capture full canvas
@@ -519,6 +525,7 @@ const LivePreview = forwardRef((props, ref) => {
   });
 
   const templateId = currentTemplate?.id || currentTemplate;
+  const isDynamic = currentTemplate?.isDynamic || currentTemplate?.isDbTemplate;
   const ResolvedTemplate = useMemo(
     () => (templateId ? getTemplateComponent(templateId) : null),
     [templateId]
@@ -542,6 +549,14 @@ const LivePreview = forwardRef((props, ref) => {
   );
 
   const renderPreviewContent = useCallback(() => {
+    if (isDynamic) {
+      return (
+        <div ref={resume_doc}>
+          <DynamicParsedTemplate template={currentTemplate} data={placeholderData} />
+        </div>
+      );
+    }
+
     if (ResolvedTemplate) {
       return (
         <div ref={resume_doc}>
@@ -829,7 +844,7 @@ const LivePreview = forwardRef((props, ref) => {
         )}
       </div>
     );
-  }, [ResolvedTemplate, placeholderData, formData, fullName, email, phone, location, linkedin, website, summary, experience, education, skills, projects, certifications]);
+  }, [isDynamic, currentTemplate, ResolvedTemplate, placeholderData, formData, fullName, email, phone, location, linkedin, website, summary, experience, education, skills, projects, certifications]);
 
   /* ── toolbar ──────────────────────────────────────────────────────────── */
   const renderToolbar = useCallback(() => (

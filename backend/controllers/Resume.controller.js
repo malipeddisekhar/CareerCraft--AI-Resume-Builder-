@@ -197,12 +197,12 @@ export const saveResume = async (req, res) => {
         error: "Unauthorized: user id missing",
       });
     }
-    
+
     const dataWithoutUser = { ...data };
     delete dataWithoutUser.user;
 
     const result = await pool.query(
-      `INSERT INTO resumes (user_id, data, created_at, updated_at) VALUES ($1, $2, NOW(), NOW()) RETURNING id`, 
+      `INSERT INTO resumes (user_id, data, created_at, updated_at) VALUES ($1, $2, NOW(), NOW()) RETURNING id`,
       [userId, JSON.stringify(dataWithoutUser)]
     );
     const cvId = result.rows[0].id;
@@ -211,7 +211,7 @@ export const saveResume = async (req, res) => {
     try {
       const flattenedText = flattenResumeData(dataWithoutUser);
       const extractedData = Object.keys(dataWithoutUser).length > 0 ? extractResumeData(flattenedText) : {};
-      
+
       const analysis = analyzeATSCompatibility(flattenedText, extractedData, "json");
       const misspelledWords = await getMisspelledWords(flattenedText);
       analysis.misspelledWords = misspelledWords;
@@ -227,8 +227,8 @@ export const saveResume = async (req, res) => {
           (sum, s) => sum + (typeof s.maxScore === 'number' ? s.maxScore : 0),
           0
         );
-        analysis.overallScore = totalPossible > 0 
-          ? Math.round((totalEarned / totalPossible) * 100) 
+        analysis.overallScore = totalPossible > 0
+          ? Math.round((totalEarned / totalPossible) * 100)
           : 0;
       }
 
@@ -253,11 +253,11 @@ export const saveResume = async (req, res) => {
         INSERT INTO ats_scores (user_id, cv_id, template_id, job_title, score, feedback, created_at)
         VALUES ($1, $2, $3, $4, $5, $6, NOW())
       `, [
-        userId, 
-        cvId, 
-        null, 
-        dataWithoutUser.personalInfo?.jobTitle || "Web Application Resume", 
-        analysis.overallScore, 
+        userId,
+        cvId,
+        null,
+        dataWithoutUser.personalInfo?.jobTitle || "Web Application Resume",
+        analysis.overallScore,
         JSON.stringify(scanData)
       ]);
       console.log("Automatic ATS score generated and saved via Web Builder.");
@@ -332,7 +332,7 @@ export const generateAIResume = async (req, res) => {
       delete dataWithoutUser.user;
 
       await pool.query(
-        `INSERT INTO resumes (user_id, data, created_at, updated_at) VALUES ($1, $2, NOW(), NOW())`, 
+        `INSERT INTO resumes (user_id, data, created_at, updated_at) VALUES ($1, $2, NOW(), NOW())`,
         [req.userId, JSON.stringify(dataWithoutUser)]
       );
       console.log("💾 AI Resume saved to DB");
@@ -410,7 +410,7 @@ export const getJobRecommendations = async (req, res) => {
 
     // Generate AI Job Recommendations
     const aiRecommendations = await generateJobRecommendationsAI(parsedData);
-    
+
     // Send response
     res.json({
       success: true,
@@ -467,7 +467,7 @@ export const uploadAndAnalyzeResume = async (req, res) => {
     const userId = req.userId;
     const file = req.file;
     const fileExtension = file.originalname.split('.').pop()?.toLowerCase();
-    
+
     let resumeText;
     let parseResult;
 
@@ -507,9 +507,9 @@ export const uploadAndAnalyzeResume = async (req, res) => {
     let parsingConfidence = 'High';
 
     // AI Fallback if the parser returns unusually empty results
-    const hasLittleData = 
-      extractedData.experience.length === 0 && 
-      extractedData.education.length === 0 && 
+    const hasLittleData =
+      extractedData.experience.length === 0 &&
+      extractedData.education.length === 0 &&
       extractedData.skills.technical.length === 0;
 
     if (hasLittleData && resumeText.length > 50) {
@@ -545,14 +545,14 @@ export const uploadAndAnalyzeResume = async (req, res) => {
     const recommendations = generateRecommendations(analysis);
 
     // Validate required fields from frontend
-   const { jobTitle, templateId, resumeprofileId } = req.body;
+    const { jobTitle, templateId, resumeprofileId } = req.body;
 
-if (!jobTitle) {
-  return res.status(400).json({
-    success: false,
-    message: "Job title is required"
-  });
-}
+    if (!jobTitle) {
+      return res.status(400).json({
+        success: false,
+        message: "Job title is required"
+      });
+    }
 
     // ✅ FIX: Ensure File Format Compatibility score is correct
     const isValidFormat = ['pdf', 'doc', 'docx'].includes(fileExtension) ||
@@ -582,10 +582,10 @@ if (!jobTitle) {
         (sum, s) => sum + (typeof s.maxScore === 'number' ? s.maxScore : 0),
         0
       );
-      
+
       // Calculate weighted overall score (0-100 scale)
-      analysis.overallScore = totalPossible > 0 
-        ? Math.round((totalEarned / totalPossible) * 100) 
+      analysis.overallScore = totalPossible > 0
+        ? Math.round((totalEarned / totalPossible) * 100)
         : 0;
     }
 
@@ -611,11 +611,11 @@ if (!jobTitle) {
       INSERT INTO ats_scores (user_id, cv_id, template_id, job_title, score, feedback, created_at)
       VALUES ($1, $2, $3, $4, $5, $6, NOW()) RETURNING id, feedback
     `, [
-      userId, 
-      resumeprofileId || null, 
-      templateId || null, 
-      jobTitle, 
-      analysis.overallScore, 
+      userId,
+      resumeprofileId || null,
+      templateId || null,
+      jobTitle,
+      analysis.overallScore,
       JSON.stringify(scanData)
     ]);
     const atsScan = { _id: insertScan.rows[0].id, filePath: insertScan.rows[0].feedback.filePath };
@@ -806,7 +806,7 @@ export const getScanStatistics = async (req, res) => {
         SUM(CASE WHEN (feedback->>'passThreshold')::boolean = true THEN 1 ELSE 0 END) as "passedScans"
       FROM ats_scores WHERE user_id = $1
     `, [userId]);
-    
+
     const stats = statsRes.rows[0];
     const totalScans = parseInt(stats.totalScans, 10);
     const passedScans = parseInt(stats.passedScans || 0, 10);
@@ -1023,4 +1023,4 @@ export const optimizeResumeATS = async (req, res) => {
     });
   }
 };
-
+

@@ -1,0 +1,93 @@
+/* Styles for dynamic uploaded templates (DOCX / HTML) to match ATS Template format */
+.dynamic-docx-container {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-height: 100% !important;
+  background-color: transparent !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+  color: #111111 !important;
+  line-height: 1.5 !important;
+  box-shadow: none !important;
+}
+
+.dynamic-docx-container table.docx-table,
+.dynamic-docx-container table {
+  width: 100% !important;
+  border-collapse: collapse !important;
+  margin-bottom: 4px !important;
+  table-layout: fixed !important;
+}
+
+.dynamic-docx-container td {
+  vertical-align: top !important;
+  padding: 2px 4px !important;
+  border: none !important;
+}
+
+.dynamic-docx-container p {
+  margin: 0 0 3px 0 !important;
+  font-size: 11.5px !important;
+  color: #222222 !important;
+  line-height: 1.45 !important;
+}
+
+.dynamic-docx-container p:first-child strong,
+.dynamic-docx-container strong {
+  color: #111111 !important;
+  font-weight: 700 !important;
+}
+
+/* Header row with bottom line matching photo 1 */
+.dynamic-docx-container .ats-header-row td {
+  border-bottom: 2px solid #111111 !important;
+  padding-bottom: 12px !important;
+  margin-bottom: 12px !important;
+}
+
+.dynamic-docx-container .ats-name-title {
+  font-size: 26px !important;
+  font-weight: 800 !important;
+  letter-spacing: 2px !important;
+  line-height: 1.05 !important;
+  text-transform: uppercase !important;
+  color: #111111 !important;
+}
+
+.dynamic-docx-container .ats-section-heading {
+  font-size: 13px !important;
+  font-weight: 800 !important;
+  letter-spacing: 1.5px !important;
+  text-transform: uppercase !important;
+  color: #111111 !important;
+  border-bottom: 1.5px solid #111111 !important;
+  padding-bottom: 2px !important;
+  margin-top: 12px !important;
+  margin-bottom: 8px !important;
+  display: block !important;
+  width: 100% !important;
+}
+
+.dynamic-docx-container ul {
+  margin: 2px 0 0 16px !important;
+  padding: 0 !important;
+  list-style-type: disc !important;
+}
+
+.dynamic-docx-container li {
+  font-size: 11.5px !important;
+  color: #222222 !important;
+  margin-bottom: 2px !important;
+  line-height: 1.5 !important;
+}
+
+.dynamic-docx-container a {
+  color: #111111 !important;
+  text-decoration: none !important;
+}
+
+.dynamic-docx-container a:hover {
+  text-decoration: underline !important;
+}

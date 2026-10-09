@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 560" width="400" height="560">
+  <defs>
+    <filter id="shadow4" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+  <rect width="100%" height="100%" fill="#f1f5f9"/>
+  <!-- Page -->
+  <rect x="25" y="20" width="350" height="520" rx="3" fill="#ffffff" filter="url(#shadow4)"/>
+
+  <!-- Centered Executive Header -->
+  <rect x="180" y="38" width="40" height="3" fill="#0f172a"/>
+  <text x="200" y="58" font-family="Georgia, serif" font-size="15" font-weight="bold" text-anchor="middle" fill="#0f172a" letter-spacing="1">JONATHAN R. VANCE</text>
+  <text x="200" y="70" font-family="sans-serif" font-size="6.5" font-weight="bold" text-anchor="middle" fill="#475569" letter-spacing="1.5">CHIEF OPERATING OFFICER &amp; EXECUTIVE LEADER</text>
+  <text x="200" y="81" font-family="sans-serif" font-size="6" text-anchor="middle" fill="#57534e">New York, NY • +1 (555) 481-9920 • j.vance@executive.corp • linkedin.com/in/jonathanvance</text>
+
+  <!-- Executive Profile -->
+  <text x="45" y="103" font-family="sans-serif" font-size="7.5" font-weight="bold" fill="#0f172a" letter-spacing="0.8">EXECUTIVE PROFILE</text>
+  <line x1="45" y1="107" x2="355" y2="107" stroke="#0f172a" stroke-width="1.2"/>
+  <text x="45" y="119" font-family="Georgia, serif" font-size="6.5" fill="#292524">Visionary Chief Operating Officer and Executive Leader with 15+ years orchestrating global enterprise</text>
+  <text x="45" y="128" font-family="Georgia, serif" font-size="6.5" fill="#292524">transformations, multi-million dollar P&amp;L turnarounds, and international mergers across Fortune 500 environments.</text>
+
+  <!-- Areas of Expertise (3x2 Grid) -->
+  <text x="45" y="148" font-family="sans-serif" font-size="7.5" font-weight="bold" fill="#0f172a" letter-spacing="0.8">AREAS OF EXECUTIVE EXPERTISE</text>
+  <line x1="45" y1="152" x2="355" y2="152" stroke="#0f172a" stroke-width="1.2"/>
+
+  <text x="45" y="164" font-family="sans-serif" font-size="6" fill="#1c1917">◆ P&amp;L &amp; Fiscal Governance</text>
+  <text x="150" y="164" font-family="sans-serif" font-size="6" fill="#1c1917">◆ Global Operations &amp; Scale</text>
+  <text x="255" y="164" font-family="sans-serif" font-size="6" fill="#1c1917">◆ Cross-Border M&amp;A</text>
+
+  <text x="45" y="176" font-family="sans-serif" font-size="6" fill="#1c1917">◆ Strategic Transformation</text>
+  <text x="150" y="176" font-family="sans-serif" font-size="6" fill="#1c1917">◆ Board &amp; Stakeholder Relations</text>
+  <text x="255" y="176" font-family="sans-serif" font-size="6" fill="#1c1917">◆ Executive Team Mentorship</text>
+
+  <!-- Career History -->
+  <text x="45" y="199" font-family="sans-serif" font-size="7.5" font-weight="bold" fill="#0f172a" letter-spacing="0.8">CAREER HISTORY &amp; KEY ACCOMPLISHMENTS</text>
+  <line x1="45" y1="203" x2="355" y2="203" stroke="#0f172a" stroke-width="1.2"/>
+
+  <text x="45" y="217" font-family="Georgia, serif" font-size="8" font-weight="bold" fill="#0f172a">Chief Operating Officer</text>
+  <text x="355" y="217" font-family="sans-serif" font-size="6" text-anchor="end" fill="#57534e">2019 – Present</text>
+  <text x="45" y="227" font-family="sans-serif" font-size="6.5" fill="#44403c">OmniCorp Global Holdings | New York, NY</text>
+  
+  <text x="52" y="238" font-family="Georgia, serif" font-size="6" fill="#292524">• Steered enterprise operations across 12 countries, overseeing a $140M operating budget and 850 personnel</text>
+  <text x="52" y="247" font-family="Georgia, serif" font-size="6" fill="#292524">• Accelerated EBITDA margin by 440 bps within 24 months through automated supply chain restructuring</text>
+  <text x="52" y="256" font-family="Georgia, serif" font-size="6" fill="#292524">• Orchestrated successful integration of $85M strategic competitor acquisition ahead of schedule</text>
+
+  <text x="45" y="275" font-family="Georgia, serif" font-size="8" font-weight="bold" fill="#0f172a">Executive Vice President, Operations</text>
+  <text x="355" y="275" font-family="sans-serif" font-size="6" text-anchor="end" fill="#57534e">2014 – 2019</text>
+  <text x="45" y="285" font-family="sans-serif" font-size="6.5" fill="#44403c">Apex Commercial Solutions | Chicago, IL</text>
+  <text x="52" y="296" font-family="Georgia, serif" font-size="6" fill="#292524">• Revitalized lagging division from negative cash flow into $24M net profitability in 3 fiscal years</text>
+  <text x="52" y="305" font-family="Georgia, serif" font-size="6" fill="#292524">• Established strategic board advisory committee and corporate risk mitigation frameworks</text>
+
+  <!-- Education & Credentials -->
+  <text x="45" y="330" font-family="sans-serif" font-size="7.5" font-weight="bold" fill="#0f172a" letter-spacing="0.8">EDUCATION &amp; BOARD MEMBERSHIPS</text>
+  <line x1="45" y1="334" x2="355" y2="334" stroke="#0f172a" stroke-width="1.2"/>
+
+  <text x="45" y="347" font-family="Georgia, serif" font-size="7" font-weight="bold" fill="#0f172a">Master of Business Administration (MBA)</text>
+  <text x="355" y="347" font-family="sans-serif" font-size="6" text-anchor="end" fill="#57534e">Columbia Business School</text>
+
+  <text x="45" y="360" font-family="Georgia, serif" font-size="7" font-weight="bold" fill="#0f172a">Bachelor of Science in Industrial Engineering</text>
+  <text x="355" y="360" font-family="sans-serif" font-size="6" text-anchor="end" fill="#57534e">Purdue University</text>
+
+  <text x="45" y="373" font-family="Georgia, serif" font-size="7" font-weight="bold" fill="#0f172a">Independent Board Member &amp; Audit Chair</text>
+  <text x="355" y="373" font-family="sans-serif" font-size="6" text-anchor="end" fill="#57534e">NextGen Logistics Board (2021 – Present)</text>
+</svg>

@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 560" width="400" height="560">
+  <defs>
+    <filter id="shadow2" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+  <rect width="100%" height="100%" fill="#f1f5f9"/>
+  <!-- Page -->
+  <rect x="25" y="20" width="350" height="520" rx="3" fill="#ffffff" filter="url(#shadow2)"/>
+
+  <!-- Top Blue Accent -->
+  <rect x="25" y="20" width="350" height="6" fill="#2563eb" rx="2"/>
+
+  <!-- Header -->
+  <text x="45" y="55" font-family="sans-serif" font-size="16" font-weight="900" fill="#0f172a">ALEX CHEN</text>
+  <text x="45" y="69" font-family="monospace" font-size="8" font-weight="bold" fill="#2563eb">SOFTWARE ENGINEER &amp; CLOUD ARCHITECT</text>
+  
+  <text x="45" y="84" font-family="sans-serif" font-size="6.5" fill="#64748b">alex.chen@dev.io • Seattle, WA • github.com/alexchen • alexchen.dev</text>
+  <line x1="45" y1="92" x2="355" y2="92" stroke="#e2e8f0" stroke-width="1"/>
+
+  <!-- Tech Stack -->
+  <text x="45" y="108" font-family="monospace" font-size="8" font-weight="bold" fill="#0f172a">// TECH_STACK</text>
+  
+  <!-- Badges -->
+  <rect x="45" y="115" width="40" height="13" rx="3" fill="#eff6ff" stroke="#bfdbfe"/>
+  <text x="65" y="124" font-family="monospace" font-size="6" text-anchor="middle" fill="#1e40af">React.js</text>
+  <rect x="90" y="115" width="40" height="13" rx="3" fill="#eff6ff" stroke="#bfdbfe"/>
+  <text x="110" y="124" font-family="monospace" font-size="6" text-anchor="middle" fill="#1e40af">Node.js</text>
+  <rect x="135" y="115" width="46" height="13" rx="3" fill="#eff6ff" stroke="#bfdbfe"/>
+  <text x="158" y="124" font-family="monospace" font-size="6" text-anchor="middle" fill="#1e40af">TypeScript</text>
+  <rect x="186" y="115" width="34" height="13" rx="3" fill="#eff6ff" stroke="#bfdbfe"/>
+  <text x="203" y="124" font-family="monospace" font-size="6" text-anchor="middle" fill="#1e40af">Python</text>
+  <rect x="225" y="115" width="42" height="13" rx="3" fill="#eff6ff" stroke="#bfdbfe"/>
+  <text x="246" y="124" font-family="monospace" font-size="6" text-anchor="middle" fill="#1e40af">AWS / EKS</text>
+  <rect x="272" y="115" width="38" height="13" rx="3" fill="#eff6ff" stroke="#bfdbfe"/>
+  <text x="291" y="124" font-family="monospace" font-size="6" text-anchor="middle" fill="#1e40af">Docker</text>
+
+  <!-- Work Experience -->
+  <text x="45" y="148" font-family="monospace" font-size="8" font-weight="bold" fill="#0f172a">// WORK_EXPERIENCE</text>
+  <line x1="45" y1="152" x2="355" y2="152" stroke="#e2e8f0" stroke-width="1"/>
+
+  <text x="45" y="166" font-family="sans-serif" font-size="8" font-weight="bold" fill="#0f172a">Senior Full-Stack Engineer</text>
+  <text x="45" y="176" font-family="sans-serif" font-size="7" fill="#2563eb">Stripe · Seattle, WA</text>
+  <text x="355" y="166" font-family="monospace" font-size="6.5" text-anchor="end" fill="#64748b">2022 – PRESENT</text>
+  
+  <text x="52" y="188" font-family="sans-serif" font-size="6.5" fill="#334155">• Designed and deployed microservices handling 45M daily financial transactions</text>
+  <text x="52" y="198" font-family="sans-serif" font-size="6.5" fill="#334155">• Reduced API latency by 38% through Redis caching &amp; database indexing optimizations</text>
+  <text x="52" y="208" font-family="sans-serif" font-size="6.5" fill="#334155">• Mentored 6 engineers and spearheaded internal TypeScript best practices</text>
+
+  <text x="45" y="228" font-family="sans-serif" font-size="8" font-weight="bold" fill="#0f172a">Software Engineer</text>
+  <text x="45" y="238" font-family="sans-serif" font-size="7" fill="#2563eb">Amazon Web Services · Seattle, WA</text>
+  <text x="355" y="228" font-family="monospace" font-size="6.5" text-anchor="end" fill="#64748b">2020 – 2022</text>
+  
+  <text x="52" y="250" font-family="sans-serif" font-size="6.5" fill="#334155">• Built real-time monitoring telemetry pipeline using Kafka, Go, and DynamoDB</text>
+  <text x="52" y="260" font-family="sans-serif" font-size="6.5" fill="#334155">• Automated deployment workflows with CDK &amp; GitHub Actions, slashing deploy times by 50%</text>
+
+  <!-- Featured Projects -->
+  <text x="45" y="286" font-family="monospace" font-size="8" font-weight="bold" fill="#0f172a">// FEATURED_PROJECTS</text>
+  <line x1="45" y1="290" x2="355" y2="290" stroke="#e2e8f0" stroke-width="1"/>
+
+  <!-- Project 1 Card -->
+  <rect x="45" y="298" width="148" height="60" rx="4" fill="#f8fafc" stroke="#e2e8f0"/>
+  <text x="53" y="312" font-family="sans-serif" font-size="7.5" font-weight="bold" fill="#0f172a">CloudMetrics CLI</text>
+  <text x="185" y="312" font-family="sans-serif" font-size="6" font-weight="bold" text-anchor="end" fill="#2563eb">GitHub &#8594;</text>
+  <text x="53" y="323" font-family="monospace" font-size="5.5" fill="#64748b">Go • Kubernetes • Prometheus</text>
+  <text x="53" y="334" font-family="sans-serif" font-size="6" fill="#475569">Real-time cluster telemetry tool with</text>
+  <text x="53" y="343" font-family="sans-serif" font-size="6" fill="#475569">over 2.4k stars on GitHub</text>
+
+  <!-- Project 2 Card -->
+  <rect x="207" y="298" width="148" height="60" rx="4" fill="#f8fafc" stroke="#e2e8f0"/>
+  <text x="215" y="312" font-family="sans-serif" font-size="7.5" font-weight="bold" fill="#0f172a">HyperCanvas UI</text>
+  <text x="347" y="312" font-family="sans-serif" font-size="6" font-weight="bold" text-anchor="end" fill="#2563eb">Live &#8594;</text>
+  <text x="215" y="323" font-family="monospace" font-size="5.5" fill="#64748b">React • WebGL • WebSockets</text>
+  <text x="215" y="334" font-family="sans-serif" font-size="6" fill="#475569">Collaborative real-time canvas engine</text>
+  <text x="215" y="343" font-family="sans-serif" font-size="6" fill="#475569">supporting 50+ simultaneous editors</text>
+
+  <!-- Education -->
+  <text x="45" y="380" font-family="monospace" font-size="8" font-weight="bold" fill="#0f172a">// EDUCATION &amp; CERTS</text>
+  <line x1="45" y1="384" x2="355" y2="384" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="45" y="398" font-family="sans-serif" font-size="7.5" font-weight="bold" fill="#0f172a">B.S. in Computer Science</text>
+  <text x="355" y="398" font-family="monospace" font-size="6.5" text-anchor="end" fill="#64748b">2020</text>
+  <text x="45" y="408" font-family="sans-serif" font-size="6.5" fill="#475569">University of Washington · GPA: 3.86</text>
+</svg>

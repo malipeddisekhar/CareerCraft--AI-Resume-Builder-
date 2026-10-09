@@ -10,6 +10,12 @@ import JessicaClaire8 from "./JessicaClaire8";
 import JessicaClaire9 from "./JessicaClaire9";
 import JessicaClaire10 from "./JessicaClaire10";
 
+// New default templates
+import HarvardClassic from "./HarvardClassic";
+import TechMinimalist from "./TechMinimalist";
+import ModernTwoColumnSlate from "./ModernTwoColumnSlate";
+import ExecutiveLeadership from "./ExecutiveLeadership";
+
 // import of raw thumbnails css to import to live preview for export purpose.
 import JessicaClairecss from "./JessicaClaire.css?raw";
 import JessicaClaire1css from "./JessicaClaire1.css?raw";
@@ -22,6 +28,11 @@ import JessicaClaire7css from "./JessicaClaire7.css?raw";
 import JessicaClaire8css from "./JessicaClaire8.css?raw";
 import JessicaClaire9css from "./JessicaClaire9.css?raw";
 import JessicaClaire10css from "./JessicaClaire10.css?raw";
+
+import HarvardClassiccss from "./HarvardClassic.css?raw";
+import TechMinimalistcss from "./TechMinimalist.css?raw";
+import ModernTwoColumnSlatecss from "./ModernTwoColumnSlate.css?raw";
+import ExecutiveLeadershipcss from "./ExecutiveLeadership.css?raw";
 
 // Import Thumbnails
 import thumb0 from "../../../assets/template_thumnail/JessicaClaire.png";
@@ -36,7 +47,48 @@ import thumb8 from "../../../assets/template_thumnail/JessicaClaire8.png";
 import thumb9 from "../../../assets/template_thumnail/JessicaClaire9.png";
 import thumb10 from "../../../assets/template_thumnail/JessicaClaire10.png";
 
+import thumbHarvard from "../../../assets/template_thumnail/HarvardClassic.svg";
+import thumbTech from "../../../assets/template_thumnail/TechMinimalist.svg";
+import thumbSlate from "../../../assets/template_thumnail/ModernTwoColumnSlate.svg";
+import thumbExec from "../../../assets/template_thumnail/ExecutiveLeadership.svg";
+
 export const TEMPLATES = [
+    {
+        id: "harvard-classic",
+        name: "Harvard Classic (ATS)",
+        component: HarvardClassic,
+        style: HarvardClassiccss,
+        thumbnail: thumbHarvard,
+        description: "Ivy League standard monochrome ATS layout with centered header.",
+        category: "Traditional",
+    },
+    {
+        id: "tech-minimalist",
+        name: "Tech Minimalist (Developer)",
+        component: TechMinimalist,
+        style: TechMinimalistcss,
+        thumbnail: thumbTech,
+        description: "Clean engineering layout with tech stack badges, GitHub links & projects.",
+        category: "Creative",
+    },
+    {
+        id: "modern-two-column-slate",
+        name: "Modern Two-Column (Slate)",
+        component: ModernTwoColumnSlate,
+        style: ModernTwoColumnSlatecss,
+        thumbnail: thumbSlate,
+        description: "Deep slate sidebar with clean profile avatar and structured experience timeline.",
+        category: "Contemporary",
+    },
+    {
+        id: "executive-leadership",
+        name: "Executive Leadership",
+        component: ExecutiveLeadership,
+        style: ExecutiveLeadershipcss,
+        thumbnail: thumbExec,
+        description: "C-suite executive portfolio with areas of expertise grid and leadership focus.",
+        category: "Contemporary",
+    },
     {
         id: "jessica-claire",
         name: "Jessica Claire (Sidebar)",

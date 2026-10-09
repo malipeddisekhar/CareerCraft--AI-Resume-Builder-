@@ -39,6 +39,7 @@ import CompletionPopup from "./components/CompletionPopup";
 import MobilePreview from "./components/MobilePreview";
 import AtsCompletionModal from "./components/AtsCompletionModal";
 import ResumeBuilderTemplates from "./ResumeBuilderTemplates";
+import DynamicParsedTemplate from "../Templates/DynamicParsedTemplate";
 import { getTemplateCSS } from "../Templates/TemplateRegistry";
 
 /* ─────────────────────────────────────────────────────────
@@ -216,7 +217,11 @@ const ResumeBuilder = () => {
     setActiveTab("builder");
   };
 
-  const currentTemplate = templates?.find((t) => t.id === selectedTemplate);
+  const currentTemplate =
+    templates?.find((t) => t.id === selectedTemplate) ||
+    (typeof selectedTemplate === "string" && selectedTemplate.length > 20
+      ? { id: selectedTemplate, isDynamic: true, isDbTemplate: true }
+      : null);
 
   // ============== Completed Status ===========
   const [completion, setcompletion] = useState({});
@@ -460,13 +465,18 @@ const ResumeBuilder = () => {
       document.body.appendChild(container);
 
       let templateKey = (selectedTemplate || "jessica-claire").replace(/-/g, "");
+      const isDynamic = currentTemplate?.isDynamic || currentTemplate?.isDbTemplate;
       const TemplateComponent = ResumeBuilderTemplates[templateKey] || ResumeBuilderTemplates["jessicaclaire"];
 
       const { createRoot } = await import("react-dom/client");
       const root = createRoot(container);
 
       await new Promise((resolve) => {
-        root.render(<TemplateComponent data={dataToExport} />);
+        if (isDynamic) {
+          root.render(<DynamicParsedTemplate template={currentTemplate} data={dataToExport} />);
+        } else {
+          root.render(<TemplateComponent data={dataToExport} />);
+        }
         setTimeout(resolve, 350);
       });
 

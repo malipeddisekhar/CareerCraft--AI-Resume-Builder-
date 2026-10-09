@@ -10,6 +10,11 @@ import JessicaClaire8 from "../Templates/JessicaClaire8.jsx";
 import JessicaClaire9 from "../Templates/JessicaClaire9.jsx";
 import JessicaClaire10 from "../Templates/JessicaClaire10.jsx";
 
+import HarvardClassic from "../Templates/HarvardClassic.jsx";
+import TechMinimalist from "../Templates/TechMinimalist.jsx";
+import ModernTwoColumnSlate from "../Templates/ModernTwoColumnSlate.jsx";
+import ExecutiveLeadership from "../Templates/ExecutiveLeadership.jsx";
+
 const ResumeBuilderTemplates = {
     jessicaclaire: JessicaClaire,
     jessicaclaire1: JessicaClaire1,
@@ -22,6 +27,11 @@ const ResumeBuilderTemplates = {
     jessicaclaire8: JessicaClaire8,
     jessicaclaire9: JessicaClaire9,
     jessicaclaire10: JessicaClaire10,
+
+    harvardclassic: HarvardClassic,
+    techminimalist: TechMinimalist,
+    moderntwocolumnslate: ModernTwoColumnSlate,
+    executiveleadership: ExecutiveLeadership,
 };
 
 export default ResumeBuilderTemplates;

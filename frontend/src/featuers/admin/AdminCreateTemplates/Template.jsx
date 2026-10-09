@@ -1,7 +1,7 @@
 import React from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { createPortal } from "react-dom";
-import { Filter, Plus, X, Search, ChevronLeft, ChevronRight, Trash2 } from "lucide-react";
+import { Filter, X, Search, ChevronLeft, ChevronRight, Trash2 } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 import { TEMPLATES } from "../../user/Templates/TemplateRegistry";
 import { templates as CV_LIST } from "../../user/CV/Templatesgallery";
@@ -11,7 +11,6 @@ import axiosInstance from "../../../api/axios";
 import TemplateTypeSwitch from "./TemplateTypeSwitch";
 import { COVER_LETTER_TEMPLATES } from "../../user/CoverLetter/CoverLetterRegistry";
 import CoverLetterTemplatesMap from "../../user/CoverLetter/CoverLetterTemplatesMap";
-import CreateTemplateModal from "./CreateTemplateModal";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -513,7 +512,6 @@ export default function AdminTemplates() {
   const [type, setType] = React.useState("resume");
   const [search, setSearch] = React.useState("");
   const [statusFilter, setStatusFilter] = React.useState("all");
-  const [createModalOpen, setCreateModalOpen] = React.useState(false);
 
   const queryClient = useQueryClient();
   const { statuses, isActive, toggleStatus } = useTemplateVisibility();
@@ -593,14 +591,6 @@ export default function AdminTemplates() {
     [approvedTemplates, statuses, search, statusFilter]
   );
 
-  const handleCreateClick = () => setCreateModalOpen(true);
-
-  const handleTemplateCreated = (newTemplate) => {
-    queryClient.invalidateQueries({ queryKey: ["adminTemplates"] });
-    queryClient.invalidateQueries({ queryKey: ["templates"] });
-    toast.success(`"${newTemplate?.name || "Template"}" added to categories! 🎉`);
-  };
-
   return (
     <div className="bg-slate-50 min-h-screen">
       <Toaster />
@@ -647,15 +637,6 @@ export default function AdminTemplates() {
                 <option value="inactive">Inactive Only</option>
               </select>
             </div>
-
-            <button
-              id="btn-create-new-template"
-              onClick={handleCreateClick}
-              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm"
-            >
-              <Plus size={16} />
-              Create New Template
-            </button>
           </div>
         </div>
 
@@ -683,13 +664,6 @@ export default function AdminTemplates() {
           viewportRef={preview.viewportRef}
           scale={preview.scale}
           onClose={preview.close}
-        />
-
-        {/* Create Template Modal */}
-        <CreateTemplateModal
-          isOpen={createModalOpen}
-          onClose={() => setCreateModalOpen(false)}
-          onSuccess={handleTemplateCreated}
         />
       </div>
     </div>

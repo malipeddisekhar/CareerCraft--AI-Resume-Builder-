@@ -20,26 +20,40 @@ export const getTemplateHtml = async (req, res) => {
       return res.status(404).json({ msg: "File not found on server" });
     }
 
-    const options = {
-      styleMap: [
-        "p[style-name='Section Title'] => h2:fresh",
-        "p[style-name='Subsection Title'] => h3:fresh",
-        "table => table.docx-table",
-        "tr => tr.docx-tr",
-        "td => td.docx-td",
-        "p[style-name='List Paragraph'] => li:fresh",
-      ],
-      includeDefaultStyleMap: true,
-    };
+    const ext = path.extname(template.file_path).toLowerCase();
 
-    const docResult = await mammoth.convertToHtml(
-      { path: template.file_path },
-      options
-    );
+    // If already HTML, read and return directly
+    if (ext === ".html" || ext === ".htm") {
+      const htmlContent = fs.readFileSync(template.file_path, "utf-8");
+      return res.status(200).json({ html: htmlContent, type: "html" });
+    }
 
-    res.status(200).json({ html: docResult.value });
+    // If DOCX, convert to HTML via mammoth
+    if (ext === ".docx") {
+      const options = {
+        styleMap: [
+          "p[style-name='Section Title'] => h2:fresh",
+          "p[style-name='Subsection Title'] => h3:fresh",
+          "table => table.docx-table",
+          "tr => tr.docx-tr",
+          "td => td.docx-td",
+          "p[style-name='List Paragraph'] => li:fresh",
+        ],
+        includeDefaultStyleMap: true,
+      };
+
+      const docResult = await mammoth.convertToHtml(
+        { path: template.file_path },
+        options
+      );
+
+      return res.status(200).json({ html: docResult.value, type: "docx" });
+    }
+
+    // Otherwise return empty or unsupported notification
+    res.status(200).json({ html: "", type: "other" });
   } catch (error) {
-    console.error("Error parsing DOCX:", error);
+    console.error("Error parsing template file:", error);
     res.status(500).json({ msg: "Parsing failed", error: error.message });
   }
 };
